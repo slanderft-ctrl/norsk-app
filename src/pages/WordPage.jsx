@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import verbsData from "../data/verbs.json"
 
 function WordPage() {
   const { word } = useParams()
@@ -28,7 +29,8 @@ function WordPage() {
         const data2 = await res2.json()
 
         // КРОК 3: отримуємо переклад
-        const translation = ""
+        const verbMatch = verbsData.verbs.find(v => v.no === word)
+        const translation = verbMatch?.ua || ""
 
         // ПАРСИНГ ДАНИХ З СТАТТІ
         // lemmas[0] — перший варіант слова
