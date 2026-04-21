@@ -5,7 +5,6 @@ import WordPage from "./pages/WordPage"
 
 import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
-import Footer from "./components/Footer"
 import TopicCard from "./components/TopicCard"
 import Home from "./pages/Home"
 import Dictionary from "./pages/Dictionary"
@@ -30,8 +29,6 @@ function App() {
           <Route path="/listening" element={<Listening />} />
           <Route path="/dictionary" element={<Dictionary />} />
         </Routes>
-
-        <Footer />
 
       </div>
     </BrowserRouter>
