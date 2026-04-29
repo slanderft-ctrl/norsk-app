@@ -4,38 +4,59 @@ function AiWidget({ context }) {
   const [expanded, setExpanded] = useState(false)
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([])
+  const [loading, setLoading] = useState(false)
 
-  // контекстні підказки залежно від слова
   const suggestions = [
     `Як використовувати "${context.word}" у реченні?`,
     `Різниця між "${context.word}" і схожими словами?`,
     `Приклади з "${context.word}" у повсякденній мові`,
   ]
 
-  function sendMessage(text) {
+  async function sendMessage(text) {
     const messageText = text || input
-    if (!messageText.trim()) return
+    if (!messageText.trim() || loading) return
 
-    // додаємо повідомлення користувача
-    setMessages(prev => [...prev, { role: "user", text: messageText }])
+    const newMessages = [...messages, { role: "user", content: messageText }]
+    setMessages(newMessages)
     setInput("")
+    setLoading(true)
 
-    // фейкова відповідь — потім замінимо на Claude API
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        role: "ai",
-        text: `Це чудове питання про "${context.word}"! Незабаром тут буде відповідь від Claude AI.`
-      }])
-    }, 600)
+    try {
+      const response = await fetch("/api/Chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: newMessages.map(m => ({
+            role: m.role,
+            content: m.content
+          })),
+          systemPrompt: `Ти AI-асистент для вивчення норвезької мови. 
+Зараз користувач вивчає слово: "${context.word}" (${context.partOfSpeech || ""}).
+Відповідай українською мовою. Будь стислим і корисним.
+Якщо пояснюєш граматику — наводь приклади норвезькою з перекладом.`,
+        }),
+      })
+
+      const data = await response.json()
+      const aiText = data.content?.[0]?.text || "Не вдалося отримати відповідь."
+
+      setMessages(prev => [...prev, { role: "assistant", content: aiText }])
+    } catch (err) {
+      setMessages(prev => [...prev, { role: "assistant", content: "Помилка з'єднання. Спробуй ще раз." }])
+    } finally {
+      setLoading(false)
+    }
   }
 
   function handleKeyDown(e) {
-    if (e.key === "Enter") sendMessage()
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
   }
 
   return (
     <>
-      {/* ЗАТЕМНЕННЯ ФОНУ */}
       {expanded && (
         <div
           className="fixed inset-0 bg-black/30 z-10"
@@ -43,13 +64,12 @@ function AiWidget({ context }) {
         />
       )}
 
-      {/* КАРТКА */}
       <div className={`
-        self-start bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col gap-3
-        transition-all duration-150
+        bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col gap-3
+        transition-all duration-200
         ${expanded
-          ? "w-125 -ml-65 z-30 relative shadow-2xl border-blue-700"
-          : "w-60 cursor-pointer hover:border-gray-600"
+          ? "fixed top-20 right-6 w-80 z-20 shadow-2xl border-blue-700"
+          : "self-start cursor-pointer hover:border-gray-600"
         }
       `}>
 
@@ -57,7 +77,6 @@ function AiWidget({ context }) {
           Запитати ШІ
         </p>
 
-        {/* ПАСИВНИЙ СТАН — підказки */}
         {!expanded && (
           <div className="flex flex-col gap-2">
             <p className="text-xs text-gray-400">Можливо тебе цікавить:</p>
@@ -77,9 +96,8 @@ function AiWidget({ context }) {
           </div>
         )}
 
-        {/* АКТИВНИЙ СТАН — чат */}
         {expanded && (
-          <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
+          <div className="flex flex-col gap-2 max-h-72 overflow-y-auto">
             {messages.length === 0 && (
               <p className="text-xs text-gray-400">
                 Вивчаєш <span className="text-blue-300 font-medium">{context.word}</span> — чим можу допомогти?
@@ -94,13 +112,17 @@ function AiWidget({ context }) {
                     : "bg-gray-800 text-gray-200 self-start mr-4"
                 }`}
               >
-                {msg.text}
+                {msg.content}
               </div>
             ))}
+            {loading && (
+              <div className="bg-gray-800 text-gray-400 text-sm px-3 py-2 rounded-lg self-start">
+                Думаю...
+              </div>
+            )}
           </div>
         )}
 
-        {/* ПОЛЕ ВВОДУ */}
         <div className="flex gap-2 items-center">
           <input
             type="text"
@@ -117,13 +139,13 @@ function AiWidget({ context }) {
               setExpanded(true)
               sendMessage()
             }}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs transition-colors"
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-xs transition-colors"
           >
             →
           </button>
         </div>
 
-        {/* КНОПКА ЗАКРИТИ */}
         {expanded && (
           <button
             onClick={(e) => {
@@ -135,7 +157,6 @@ function AiWidget({ context }) {
             закрити ✕
           </button>
         )}
-
       </div>
     </>
   )
