@@ -114,9 +114,9 @@ function AiWidget({ context }) {
                 }`}
               >
                 {msg.role === "assistant"
-                  ? <ReactMarkdown className="prose prose-invert prose-sm max-w-none text-gray-200">
-                  {msg.content}
-                  </ReactMarkdown>
+                  ? <div className="prose prose-invert prose-sm max-w-none text-gray-200 text-sm">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
                   : msg.content
                 }
               </div>
