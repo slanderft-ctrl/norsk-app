@@ -1,4 +1,5 @@
 import { useState } from "react"
+import ReactMarkdown from "react-markdown"
 
 function AiWidget({ context }) {
   const [expanded, setExpanded] = useState(false)
@@ -112,7 +113,12 @@ function AiWidget({ context }) {
                     : "bg-gray-800 text-gray-200 self-start mr-4"
                 }`}
               >
-                {msg.content}
+                {msg.role === "assistant"
+                  ? <ReactMarkdown className="prose prose-invert prose-sm max-w-none text-gray-200">
+                  {msg.content}
+                  </ReactMarkdown>
+                  : msg.content
+                }
               </div>
             ))}
             {loading && (
