@@ -24,7 +24,7 @@ export default async function handler(req, res) {
                 cache_control: { type: "ephemeral" }
             }
         ],
-        messeges,
+        messages,
         }),
     })
   
