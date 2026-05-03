@@ -178,10 +178,8 @@ function WordPage() {
 
         <div className="grid grid-cols-3 gap-4">
 
-          {/* ЛІВА ЧАСТИНА — основний контент */}
           <div className="col-span-2 flex flex-col gap-4">
 
-            {/* ГОЛОВНА КАРТКА */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -331,7 +329,6 @@ function WordPage() {
 
           </div>
 
-          {/* ПРАВА КОЛОНКА — AI віджет */}
           <div className="col-span-1">
             <AiWidget context={{ word: wordData.word, partOfSpeech: wordData.partOfSpeech }} />
           </div>

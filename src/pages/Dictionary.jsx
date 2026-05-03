@@ -19,7 +19,6 @@ function Dictionary() {
   })
   const [expandedId, setExpandedId] = useState(null)
 
-  // ФУНКЦІЯ ЗБЕРЕЖЕННЯ НОТАТКИ
   function saveNote(id, note) {
     const updated = myWords.map(w =>
       w.id === id ? { ...w, note } : w

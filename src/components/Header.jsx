@@ -16,7 +16,6 @@ function Header({ onMenuClick }) {
       return
     }
 
-    // пошук у моєму словнику — миттєвий
     const myWords = JSON.parse(localStorage.getItem("myWords") || "[]")
     const myResults = myWords.filter(w =>
       w.no.toLowerCase().includes(query.toLowerCase()) ||
@@ -24,7 +23,6 @@ function Header({ onMenuClick }) {
     )
     setMyWordsResults(myResults)
 
-    // пошук у Ordbøkene — з debounce
     clearTimeout(debounceTimer.current)
     debounceTimer.current = setTimeout(async () => {
       try {
@@ -59,7 +57,6 @@ function Header({ onMenuClick }) {
 
       <span className="text-white font-medium shrink-0">Norsk App</span>
 
-      {/* ГЛОБАЛЬНИЙ ПОШУК */}
       <div className="flex-1 max-w-xl mx-auto relative">
         <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2">
           <span className="text-gray-500 text-sm">🔍</span>
@@ -74,7 +71,6 @@ function Header({ onMenuClick }) {
           />
         </div>
 
-        {/* ДРОПДАУН РЕЗУЛЬТАТІВ */}
         {showResults && query.trim() && (suggestions.length > 0 || myWordsResults.length > 0) && (
           <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden z-50 shadow-2xl max-h-96 overflow-y-auto">
 
