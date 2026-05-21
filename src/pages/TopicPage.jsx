@@ -262,13 +262,13 @@ export default function TopicPage() {
             <div className="mt-4 bg-gray-900 border border-gray-800 rounded-xl p-4">
               <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Словник теми</p>
               <div className="flex flex-wrap gap-2">
-                {subtopic.vocabulary.map((word, i) => (
+                {subtopic.vocabulary?.map((item, i) => (
                   <button
-                    key={i}
-                    onClick={() => navigate(`/dictionary/${word}`)}
-                    className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 px-3 py-1.5 rounded-lg transition-colors"
+                   key={i}
+                    onClick={() => navigate(`/dictionary/${typeof item === "string" ? item : item.word}`)}
+                    className="..."
                   >
-                    {word}
+                    {typeof item === "string" ? item : `${item.word} — ${item.translation}`}
                   </button>
                 ))}
               </div>
