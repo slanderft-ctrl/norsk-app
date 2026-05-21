@@ -268,7 +268,7 @@ export default function TopicPage() {
                     onClick={() => navigate(`/dictionary/${typeof item === "string" ? item : item.word}`)}
                     className="..."
                   >
-                    {typeof item === "string" ? item : `${item.word} — ${item.translation}`}
+                    {typeof item === "string" ? item : item.word}
                   </button>
                 ))}
               </div>
