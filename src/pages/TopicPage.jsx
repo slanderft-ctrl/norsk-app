@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { topics } from "../data/topics"
 
-// ── СТАН КАРТКИ ─────────────────────
 const STAGES = { READ: "read", LISTEN: "listen", QUIZ: "quiz" }
 
 export default function TopicPage() {
@@ -29,7 +28,6 @@ export default function TopicPage() {
 
   const words = subtopic.text?.split(" ") || []
 
-  // ── TTS ────────────────────────────
   function speak() {
     if (speaking) { speechSynthesis.cancel(); setSpeaking(false); setWordIndex(-1); return }
     const utt = new SpeechSynthesisUtterance(subtopic.text)
@@ -39,7 +37,6 @@ export default function TopicPage() {
     const nora = voices.find(v => v.lang === "nb-NO")
     if (nora) utt.voice = nora
 
-    let i = 0
     utt.onboundary = e => {
       if (e.name === "word") {
         const spoken = subtopic.text.slice(0, e.charIndex + e.charLength)
@@ -52,13 +49,11 @@ export default function TopicPage() {
     speechSynthesis.speak(utt)
   }
 
-  // ── ПЕРЕГОРТАННЯ ───────────────────
   function goStage(next) {
     setFlipping(true)
     setTimeout(() => { setStage(next); setFlipping(false) }, 400)
   }
 
-  // ── ПЕРЕХІД ДО НАСТУПНОЇ ПІДТЕМИ ──
   function nextSubtopic() {
     const idx = topic.subtopics.findIndex(s => s.id === subtopicId)
     if (idx < topic.subtopics.length - 1) {
@@ -73,7 +68,7 @@ export default function TopicPage() {
   }
 
   const subtopicIdx = topic.subtopics.findIndex(s => s.id === subtopicId)
-  const progress = ((subtopicIdx) / topic.subtopics.length) * 100
+  const progress = (subtopicIdx / topic.subtopics.length) * 100
 
   return (
     <main className="flex-1 bg-gray-950 min-h-screen p-4 md:p-8">
@@ -88,7 +83,6 @@ export default function TopicPage() {
             <h1 className="text-white font-medium">{topic.title}</h1>
             <span className="text-xs text-gray-500">{subtopicIdx + 1} / {topic.subtopics.length}</span>
           </div>
-          {/* Прогрес-бар */}
           <div className="w-full bg-gray-800 rounded-full h-1">
             <div className="bg-blue-500 h-1 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
           </div>
@@ -106,7 +100,6 @@ export default function TopicPage() {
               <p className="text-white font-medium">{subtopic.title}</p>
               <p className="text-xs text-gray-500">{subtopic.titleUa}</p>
             </div>
-            {/* Іконка стадії */}
             <div className="ml-auto text-xs text-gray-600 flex items-center gap-2">
               {[STAGES.READ, STAGES.LISTEN, STAGES.QUIZ].map((s, i) => (
                 <div key={s} className={`w-2 h-2 rounded-full transition-colors ${stage === s ? "bg-blue-400" : stage > s || (stage === STAGES.QUIZ && i < 2) ? "bg-green-600" : "bg-gray-700"}`} />
@@ -119,7 +112,21 @@ export default function TopicPage() {
             <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
                 <span className="text-xs text-gray-500 uppercase tracking-wider">Читання</span>
-                <span className="text-xs bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded-full">{topic.level}</span>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={speak}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all ${
+                      speaking
+                        ? "bg-red-950 border border-red-800 text-red-400"
+                        : "bg-gray-800 border border-gray-700 text-gray-300 hover:border-gray-500"
+                    }`}
+                  >
+                    {speaking ? "⏹ Стоп" : "▶ Слухати"}
+                  </button>
+                  <span className="text-xs bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded-full">
+                    {topic.level}
+                  </span>
+                </div>
               </div>
               <div className="p-6">
                 <p className="text-gray-200 leading-relaxed text-base">
@@ -199,7 +206,6 @@ export default function TopicPage() {
                       {subtopic.questions[quizIndex]?.q}
                     </p>
 
-                    {/* Поле відповіді */}
                     <textarea
                       value={answers[quizIndex] || ""}
                       onChange={e => setAnswers(prev => ({ ...prev, [quizIndex]: e.target.value }))}
@@ -208,7 +214,6 @@ export default function TopicPage() {
                       className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500 resize-none min-h-[80px] disabled:opacity-60 transition-colors"
                     />
 
-                    {/* Правильна відповідь */}
                     {revealed[quizIndex] && (
                       <div className="mt-4 bg-green-950 border border-green-800 rounded-xl px-4 py-3">
                         <p className="text-xs text-green-500 uppercase tracking-wider mb-1">Правильна відповідь</p>
@@ -264,7 +269,7 @@ export default function TopicPage() {
               <div className="flex flex-wrap gap-2">
                 {subtopic.vocabulary?.map((item, i) => (
                   <button
-                   key={i}
+                    key={i}
                     onClick={() => navigate(`/dictionary/${typeof item === "string" ? item : item.word}`)}
                     className="..."
                   >
