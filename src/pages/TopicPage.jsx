@@ -1,6 +1,7 @@
 import { useState, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { topics } from "../data/topics"
+import WordPopover from "../components/WordPopover"
 
 const STAGES = { READ: "read", LISTEN: "listen", QUIZ: "quiz" }
 
@@ -130,7 +131,7 @@ export default function TopicPage() {
               </div>
               <div className="p-6">
                 <p className="text-gray-200 leading-relaxed text-base">
-                  {subtopic.text}
+                  WordPopover text={subtopic.text}
                 </p>
               </div>
               <div className="px-6 py-4 border-t border-gray-800 flex justify-end">
