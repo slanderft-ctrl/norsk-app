@@ -8,12 +8,13 @@ function tokenize(text) {
 }
 
 async function callClaude(messages, systemPrompt) {
-  const body = { model: "claude-sonnet-4-20250514", max_tokens: 400, messages }
-  if (systemPrompt) body.system = systemPrompt
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const res = await fetch("/api/Chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      messages,
+      systemPrompt,
+    }),
   })
   const data = await res.json()
   return data.content?.[0]?.text || ""
@@ -135,7 +136,7 @@ export default function WordPopover({ text }) {
   const rawLeft = wordPos.left - popoverWidth / 2
   const maxLeft = (containerRef.current?.offsetWidth || 600) - popoverWidth - 8
   const popoverLeft = Math.max(8, Math.min(rawLeft, maxLeft))
-  const popoverTop = wordPos.top - popoverHeight - 12
+  const popoverTop = wordPos.top - popoverHeight - 8
 
   return (
     <div style={{ padding: "1.5rem 0", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
@@ -153,7 +154,7 @@ export default function WordPopover({ text }) {
         <span style={{ fontSize: "11px", padding: "3px 10px", borderRadius: "20px", background: "#EEEDFE", color: "#534AB7", fontWeight: 500 }}>A1</span>
       </div>
 
-      <div ref={containerRef} style={{ position: "relative", lineHeight: 2.2, fontSize: "15px" }}>
+      <div ref={containerRef} style={{ position: "relative", overflowY: "visible", lineHeight: 1.7, fontSize: "15px", letterSpacing: "normal", wordSpacing: "normal"}}>
         {tokens.map((token, i) => {
           if (PUNCT.test(token)) return <span key={i} style={{ color: "var(--color-text-primary)" }}>{token}</span>
           const active = word === token
@@ -186,8 +187,8 @@ export default function WordPopover({ text }) {
               left: `${popoverLeft}px`,
               top: `${Math.max(4, popoverTop)}px`,
               width: `${popoverWidth}px`,
-              background: "var(--color-background-primary)",
-              border: "0.5px solid var(--color-border-secondary)",
+                background: "#1a1f2e",
+                border: "1px solid rgba(255,255,255,0.15)",
               borderRadius: "14px",
               zIndex: 200,
               boxShadow: "0 8px 32px rgba(0,0,0,0.10)",
