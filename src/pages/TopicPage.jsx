@@ -129,11 +129,7 @@ export default function TopicPage() {
                   </span>
                 </div>
               </div>
-              <div className="p-6">
-                <p className="text-gray-200 leading-relaxed text-base">
-                  WordPopover text={subtopic.text}
-                </p>
-              </div>
+             <WordPopover text={subtopic.text} />
               <div className="px-6 py-4 border-t border-gray-800 flex justify-end">
                 <button
                   onClick={() => goStage(STAGES.LISTEN)}
