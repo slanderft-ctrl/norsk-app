@@ -110,7 +110,7 @@ export default function TopicPage() {
 
           {/* ── СТАДІЯ 1: ЧИТАННЯ ── */}
           {stage === STAGES.READ && (
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl">
               <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
                 <span className="text-xs text-gray-500 uppercase tracking-wider">Читання</span>
                 <div className="flex items-center gap-3">
@@ -129,7 +129,9 @@ export default function TopicPage() {
                   </span>
                 </div>
               </div>
-             <WordPopover text={subtopic.text} />
+              <div className="p-6" style={{ overflow: "visible" }}>
+                <WordPopover text={subtopic.text} />
+              </div>
               <div className="px-6 py-4 border-t border-gray-800 flex justify-end">
                 <button
                   onClick={() => goStage(STAGES.LISTEN)}
