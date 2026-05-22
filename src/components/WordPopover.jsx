@@ -57,10 +57,7 @@ export default function WordPopover({ text }) {
     clearTimer()
     if (chatMode) return
     const rect = e.currentTarget.getBoundingClientRect()
-    const cRect = containerRef.current.getBoundingClientRect()
-    const left = rect.left - cRect.left + rect.width / 2
-    const top = rect.top - cRect.top
-    setWordPos({ left, top })
+    setWordPos({ left: rect.left + rect.width / 2, top: rect.top })
     if (token !== word) {
       setPhase("idle")
       setExplanation("")
@@ -79,20 +76,26 @@ export default function WordPopover({ text }) {
     setLoading(true)
     setPhase("loading")
     try {
-      const prompt = `Учень читає норвезький текст: "${text}"
-Він питає про: "${word}"
-
-Відповідай СТРОГО у JSON без markdown та пояснень:
-{"explanation":"коротке пояснення українською (1-2 речення, значення + граматика якщо потрібно)","suggestions":["контекстне питання 1 українською","контекстне питання 2 українською"]}`
-
-      const raw = await callClaude([{ role: "user", content: prompt }])
+      const raw = await callClaude(
+        [{ role: "user", content: `Слово: "${word}". Текст: "${text}". JSON відповідь:` }],
+        'Ти вчитель норвезької. Відповідай ТІЛЬКИ валідним JSON без markdown: {"explanation":"пояснення українською 1-2 речення","suggestions":["питання 1","питання 2"]}'
+      )
       const clean = raw.replace(/```[\s\S]*?```/g, "").trim()
-      const parsed = JSON.parse(clean)
-      setExplanation(parsed.explanation || "")
-      setSuggestions(parsed.suggestions || [])
+      let expl = ""
+      let sugg = []
+      try {
+        const parsed = JSON.parse(clean)
+        expl = parsed.explanation || ""
+        sugg = parsed.suggestions || []
+      } catch {
+        expl = raw
+        sugg = []
+      }
+      setExplanation(expl)
+      setSuggestions(sugg)
       setHistory([
         { role: "user", content: `Що означає «${word}»?` },
-        { role: "assistant", content: parsed.explanation || "" },
+        { role: "assistant", content: expl },
       ])
       setPhase("answered")
     } catch {
@@ -133,10 +136,8 @@ export default function WordPopover({ text }) {
   const tokens = tokenize(text)
   const popoverWidth = chatMode ? 300 : phase === "answered" ? 260 : 130
   const popoverHeight = chatMode ? 320 : phase === "answered" ? 200 : 44
-  const rawLeft = wordPos.left - popoverWidth / 2
-  const maxLeft = (containerRef.current?.offsetWidth || 600) - popoverWidth - 8
-  const popoverLeft = Math.max(8, Math.min(rawLeft, maxLeft))
-  const popoverTop = wordPos.top - popoverHeight - 8
+  const popoverLeft = Math.max(8, Math.min(wordPos.left - popoverWidth / 2, window.innerWidth - popoverWidth - 8))
+  const popoverTop = wordPos.top - popoverHeight - 10
 
   return (
     <div style={{ padding: "1.5rem 0", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
@@ -183,9 +184,9 @@ export default function WordPopover({ text }) {
             onMouseEnter={onPopoverEnter}
             onMouseLeave={onPopoverLeave}
             style={{
-              position: "absolute",
+              position: "fixed",
               left: `${popoverLeft}px`,
-              top: `${Math.max(4, popoverTop)}px`,
+              top: `${Math.max(8, popoverTop)}px`,
               width: `${popoverWidth}px`,
                 background: "#1a1f2e",
                 border: "1px solid rgba(255,255,255,0.15)",
