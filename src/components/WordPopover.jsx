@@ -1,10 +1,4 @@
-import { useState, useRef } from "react"
-
-const PUNCT = /^[\s\u2013\-!?.,;:«»""]+$/
-
-function tokenize(text) {
-  return text.split(/(\s+|[–\-!?.,;:«»""]+)/g).filter(Boolean)
-}
+import { useState, useRef, useEffect } from "react"
 
 async function callClaude(messages, systemPrompt) {
   const res = await fetch("/api/Chat", {
@@ -27,10 +21,8 @@ export default function WordPopover({ text }) {
   const [loading, setLoading] = useState(false)
   const [chatMode, setChatMode] = useState(false)
 
-  const hideTimer = useRef(null)
   const chatEndRef = useRef(null)
-
-  const clearTimer = () => clearTimeout(hideTimer.current)
+  const popoverRef = useRef(null)
 
   const closeAll = () => {
     setWord(null); setRect(null); setPhase("idle")
@@ -38,20 +30,31 @@ export default function WordPopover({ text }) {
     setChatMode(false); setChatInput("")
   }
 
-  const startHide = () => {
-    hideTimer.current = setTimeout(() => {
-      if (!chatMode) closeAll()
-    }, 200)
-  }
-
-  const onWordEnter = (token, e) => {
-    clearTimer()
-    if (chatMode) return
-    const r = e.currentTarget.getBoundingClientRect()
-    if (token !== word) {
-      setPhase("idle"); setExplanation(""); setSuggestions([]); setHistory([])
+  useEffect(() => {
+    const handleMouseDown = (e) => {
+      if (popoverRef.current?.contains(e.target)) return
+      setWord(null); setRect(null); setPhase("idle")
+      setExplanation(""); setSuggestions([]); setHistory([])
+      setChatMode(false); setChatInput("")
     }
-    setWord(token)
+    document.addEventListener("mousedown", handleMouseDown)
+    return () => document.removeEventListener("mousedown", handleMouseDown)
+  }, [])
+
+  const onTextMouseUp = () => {
+    const sel = window.getSelection()
+    if (!sel || sel.isCollapsed) return
+    const selectedText = sel.toString().trim()
+    if (!selectedText) return
+
+    const range = sel.getRangeAt(0)
+    const r = range.getBoundingClientRect()
+
+    if (selectedText !== word) {
+      setPhase("idle"); setExplanation(""); setSuggestions([]); setHistory([])
+      setChatMode(false); setChatInput("")
+    }
+    setWord(selectedText)
     setRect({ left: r.left + r.width / 2, top: r.top })
   }
 
@@ -109,50 +112,34 @@ export default function WordPopover({ text }) {
     }
   }
 
-  // Popover dimensions
   const PW = chatMode ? 300 : phase === "answered" ? 260 : 130
   const PH = chatMode ? 340 : phase === "answered" ? 210 : 44
 
-  // Position: fixed, above the word
   const popLeft = rect
-    ? Math.max(8, Math.min(rect.left - PW / 2, (typeof window !== "undefined" ? window.innerWidth : 800) - PW - 8))
+    ? Math.max(8, Math.min(rect.left - PW / 2, window.innerWidth - PW - 8))
     : 0
   const popTop = rect ? Math.max(8, rect.top - PH - 10) : 0
-
-  const tokens = tokenize(text)
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif" }}>
       {/* TEXT */}
-      <p style={{ lineHeight: 1.85, fontSize: "15px", color: "#e5e7eb" }}>
-        {tokens.map((token, i) => {
-          if (PUNCT.test(token)) return <span key={i}>{token}</span>
-          const active = word === token
-          return (
-            <span
-              key={i}
-              onMouseEnter={e => onWordEnter(token, e)}
-              onMouseLeave={startHide}
-              style={{
-                borderRadius: "3px",
-                padding: "0 2px",
-                background: active ? "rgba(99,102,241,0.18)" : "transparent",
-                color: active ? "#a5b4fc" : "#e5e7eb",
-                cursor: "default",
-                transition: "all .1s",
-              }}
-            >
-              {token}
-            </span>
-          )
-        })}
+      <p
+        onMouseUp={onTextMouseUp}
+        style={{
+          lineHeight: 1.85,
+          fontSize: "15px",
+          color: "#e5e7eb",
+          cursor: "text",
+          userSelect: "text",
+        }}
+      >
+        {text}
       </p>
 
-      {/* POPOVER — position: fixed so it escapes any overflow:hidden */}
+      {/* POPOVER */}
       {word && rect && (
         <div
-          onMouseEnter={clearTimer}
-          onMouseLeave={() => { if (!chatMode) startHide() }}
+          ref={popoverRef}
           style={{
             position: "fixed",
             left: `${popLeft}px`,
@@ -199,7 +186,7 @@ export default function WordPopover({ text }) {
                   <span style={{ fontSize: "13px", fontWeight: 600, color: "#f3f4f6" }}>«{word}»</span>
                 </div>
                 <button
-                  onClick={() => { setChatMode(true); clearTimer() }}
+                  onClick={() => setChatMode(true)}
                   title="Розкрити чат"
                   style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "6px", width: "22px", height: "22px", cursor: "pointer", color: "#6b7280", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}
                 >↗</button>
@@ -224,7 +211,7 @@ export default function WordPopover({ text }) {
                       style={{ textAlign: "left", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "6px 9px", fontSize: "11px", color: "#9ca3af", cursor: "pointer", fontFamily: "inherit", lineHeight: 1.4 }}
                     >{s}</button>
                   ))}
-                  <button onClick={() => { setChatMode(true); clearTimer() }}
+                  <button onClick={() => setChatMode(true)}
                     style={{ textAlign: "left", background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "6px 9px", fontSize: "11px", color: "#6b7280", cursor: "pointer", fontFamily: "inherit" }}
                   >Запитати своє →</button>
                 </div>
