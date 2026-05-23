@@ -129,26 +129,7 @@ export default function TopicPage() {
                   </span>
                 </div>
               </div>
-              <div className="p-6 flex gap-6" style={{ overflow: "visible" }}>
-                {subtopic.vocabulary?.length > 0 && (
-                  <div className="shrink-0 w-36">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Словник</p>
-                    <div className="flex flex-col gap-1">
-                      {subtopic.vocabulary.map((item, i) => {
-                        const w = typeof item === "string" ? item : item.word
-                        return (
-                          <button
-                            key={i}
-                            onClick={() => navigate(`/dictionary/${w}`)}
-                            className="text-left text-sm text-gray-400 px-2 py-1.5 rounded-lg transition-all duration-150 group hover:bg-gray-800"
-                          >
-                            <span className="group-hover:text-blue-300 transition-colors">{w}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
+              <div className="p-6" style={{ overflow: "visible" }}>
                 <div className="flex-1 min-w-0" style={{ overflow: "visible" }}>
                   <WordPopover text={subtopic.text} />
                 </div>
