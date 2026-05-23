@@ -129,60 +129,35 @@ export default function TopicPage() {
                   </span>
                 </div>
               </div>
-              <div className="p-6" style={{ overflow: "visible" }}>
-                <WordPopover text={subtopic.text} />
+              <div className="p-6 flex gap-6" style={{ overflow: "visible" }}>
+                {subtopic.vocabulary?.length > 0 && (
+                  <div className="shrink-0 w-36">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Словник</p>
+                    <div className="flex flex-col gap-1">
+                      {subtopic.vocabulary.map((item, i) => {
+                        const w = typeof item === "string" ? item : item.word
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => navigate(`/dictionary/${w}`)}
+                            className="text-left text-sm text-gray-400 px-2 py-1.5 rounded-lg transition-all duration-150 group hover:bg-gray-800"
+                          >
+                            <span className="group-hover:text-blue-300 transition-colors">{w}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+                <div className="flex-1 min-w-0" style={{ overflow: "visible" }}>
+                  <WordPopover text={subtopic.text} />
+                </div>
               </div>
+
               <div className="px-6 py-4 border-t border-gray-800 flex justify-end">
                 <button
-                  onClick={() => goStage(STAGES.LISTEN)}
+                  onClick={() => goStage(STAGES.QUIZ)}
                   className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"
-                >
-                  Далі: аудіювання →
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── СТАДІЯ 2: АУДІЮВАННЯ ── */}
-          {stage === STAGES.LISTEN && (
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
-                <span className="text-xs text-gray-500 uppercase tracking-wider">Аудіювання</span>
-                <button
-                  onClick={speak}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all ${
-                    speaking
-                      ? "bg-red-950 border border-red-800 text-red-400"
-                      : "bg-blue-900 border border-blue-700 text-blue-300 hover:bg-blue-800"
-                  }`}
-                >
-                  {speaking ? "⏹ Зупинити" : "▶ Відтворити"}
-                </button>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-200 leading-relaxed text-base">
-                  {words.map((word, i) => (
-                    <span
-                      key={i}
-                      className={`transition-colors duration-100 ${
-                        i === wordIndex ? "bg-blue-500 text-white rounded px-0.5" : ""
-                      }`}
-                    >
-                      {word}{" "}
-                    </span>
-                  ))}
-                </p>
-              </div>
-              <div className="px-6 py-4 border-t border-gray-800 flex justify-between items-center">
-                <button
-                  onClick={() => goStage(STAGES.READ)}
-                  className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
-                >
-                  ← Назад до тексту
-                </button>
-                <button
-                  onClick={() => { speechSynthesis.cancel(); setSpeaking(false); setWordIndex(-1); goStage(STAGES.QUIZ) }}
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg text-sm transition-colors"
                 >
                   Далі: вправи →
                 </button>
@@ -190,7 +165,7 @@ export default function TopicPage() {
             </div>
           )}
 
-          {/* ── СТАДІЯ 3: ВПРАВИ ── */}
+          {/* ── СТАДІЯ 2: ВПРАВИ ── */}
           {stage === STAGES.QUIZ && (
             <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
@@ -264,13 +239,13 @@ export default function TopicPage() {
           {/* ── СЛОВНИК ПІДТЕМИ ── */}
           {subtopic.vocabulary?.length > 0 && (
             <div className="mt-4 bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Словник теми</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Fokuser på</p>
               <div className="flex flex-wrap gap-2">
                 {subtopic.vocabulary?.map((item, i) => (
                   <button
                     key={i}
                     onClick={() => navigate(`/dictionary/${typeof item === "string" ? item : item.word}`)}
-                    className="..."
+                    className="text-xs text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 px-3 py-1 rounded-full transition-colors"
                   >
                     {typeof item === "string" ? item : item.word}
                   </button>
