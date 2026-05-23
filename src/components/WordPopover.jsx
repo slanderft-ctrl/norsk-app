@@ -96,7 +96,7 @@ export default function WordPopover({ text }) {
     }
   }
 
-  const PW = chatMode ? 500 : phase === "answered" ? 360 : 230
+  const PW = chatMode ? 600 : phase === "answered" ? 280 : 190
 
   return (
     <div style={{ position: "relative", lineHeight: 1.85, fontSize: "15px", color: "#e5e7eb", fontFamily: "system-ui, sans-serif" }}>
