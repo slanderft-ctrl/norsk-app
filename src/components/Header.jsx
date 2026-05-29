@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "../lib/supabase"
+import { useAuth } from "../context/AuthContext"
 
 function Header({ onMenuClick }) {
   const navigate = useNavigate()
@@ -21,18 +22,24 @@ function Header({ onMenuClick }) {
       .single()
       .then(({ data }) => setProfile(data))
   }, [user])
+  
   useEffect(() => {
     if (!query.trim()) {
       setSuggestions([])
       setMyWordsResults([])
       return
     }
-    const myWords = JSON.parse(localStorage.getItem("myWords") || "[]")
-    const myResults = myWords.filter(w =>
-      w.no.toLowerCase().includes(query.toLowerCase()) ||
-      w.ua.toLowerCase().includes(query.toLowerCase())
-    )
-    setMyWordsResults(myResults)
+    if (user) {
+      supabase
+        .from("my_words")
+        .select("word_no, word_ua")
+        .eq("user_id", user.id)
+        .or(`word_no.ilike.%${query}%,word_ua.ilike.%${query}%`)
+        .limit(5)
+        .then(({ data }) => setMyWordsResults(data ?? []))
+    } else {
+      setMyWordsResults([])
+    }
     clearTimeout(debounceTimer.current)
     debounceTimer.current = setTimeout(async () => {
       try {
@@ -98,7 +105,7 @@ function Header({ onMenuClick }) {
                 {myWordsResults.map(w => (
                   <div
                     key={w.id}
-                    onMouseDown={() => selectWord(w.no)}
+                    onMouseDown={() => selectWord(w.word_no)}
                     className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 flex items-center justify-between"
                   >
                     <span className="text-gray-900 text-sm font-medium">{w.no}</span>

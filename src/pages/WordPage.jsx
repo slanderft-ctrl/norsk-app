@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import verbsData from "../data/verbs.json"
 import AiWidget from "../components/AiWidget"
+import { supabase } from "../lib/supabase"
+import { useAuth } from "../context/AuthContext"
 
 const TAG_MAP = {
   "NOUN":"іменник","VERB":"дієслово","ADJ":"прикметник","ADV":"прислівник",
@@ -62,6 +64,7 @@ function Section({ icon, title, children }) {
 export default function WordPage() {
   const { word } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [wordData, setWordData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [added, setAdded] = useState(false)
@@ -119,14 +122,27 @@ export default function WordPage() {
     fetchWord()
   }, [word])
 
-  function addToDict() {
-    const saved = JSON.parse(localStorage.getItem("myWords") || "[]")
-    if (!saved.find(w => w.no === wordData.word)) {
-      saved.unshift({ id: Date.now(), no: wordData.word, ua: wordData.translation || "" })
-      localStorage.setItem("myWords", JSON.stringify(saved))
-    }
-    setAdded(true); setTimeout(() => setAdded(false), 2000)
+  async function addToDict() {
+  if (!user) { navigate("/auth"); return }
+
+  const { data: existing } = await supabase
+    .from("my_words")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("word_no", wordData.word)
+    .single()
+
+  if (!existing) {
+    await supabase.from("my_words").insert({
+      user_id: user.id,
+      word_no: wordData.word,
+      word_ua: wordData.translation || "",
+    })
   }
+
+  setAdded(true)
+  setTimeout(() => setAdded(false), 2000)
+}
 
   if (loading) return (
     <main style={{ flex:1, background:"#F8F7F4", display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -230,17 +246,17 @@ export default function WordPage() {
                   >▶</button>
 
                   {/* Add to dict */}
-                  <button
-                    onClick={addToDict}
-                    style={{
-                      fontSize:"12px", fontWeight:500, padding:"7px 14px", borderRadius:"10px",
-                      cursor:"pointer", transition:"all .15s", whiteSpace:"nowrap",
-                      background: added ? "#E1F5EE" : "#F8F7F4",
-                      border: `0.5px solid ${added ? "#9FE1CB" : "#E5E7EB"}`,
-                      color: added ? "#0F6E56" : "#6B7280",
-                    }}
+                 <button
+                  onClick={addToDict}
+                  style={{
+                    fontSize:"12px", fontWeight:500, padding:"7px 14px", borderRadius:"10px",
+                    cursor:"pointer", transition:"all .15s", whiteSpace:"nowrap",
+                    background: added ? "#E1F5EE" : "#F8F7F4",
+                    border: `0.5px solid ${added ? "#9FE1CB" : "#E5E7EB"}`,
+                    color: added ? "#0F6E56" : "#6B7280",
+                  }}
                   >
-                    {added ? "✓ Додано" : "+ Словник"}
+                  {added ? "✓ Додано" : user ? "+ Словник" : "🔐 Увійти"}
                   </button>
                 </div>
               </div>

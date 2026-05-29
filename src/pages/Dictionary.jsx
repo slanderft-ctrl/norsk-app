@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { supabase } from "../lib/supabase"
+import { useAuth } from "../context/AuthContext"
 
 const TOPICS = [
   { id: 1, name: "Familie og hjem",  count: 42 },
@@ -21,10 +23,10 @@ function speak(text) {
   speechSynthesis.speak(utt)
 }
 
-// ── WordCard ────────────────────────────────────────────
+// ── WordCard — без змін ─────────────────────────────────
 function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) {
-  const [noteValue, setNoteValue]       = useState(word.note || "")
-  const [saved, setSaved]               = useState(false)
+  const [noteValue, setNoteValue] = useState(word.note || "")
+  const [saved, setSaved] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   useEffect(() => { setNoteValue(word.note || "") }, [word.note])
@@ -45,26 +47,20 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
       style={{
         background: "#fff",
         border: `0.5px solid ${isExpanded ? "#0F6E56" : "#E5E7EB"}`,
-        borderRadius: "14px",
-        padding: "14px 16px",
-        cursor: "pointer",
-        transition: "all .15s",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
+        borderRadius: "14px", padding: "14px 16px", cursor: "pointer",
+        transition: "all .15s", display: "flex", flexDirection: "column", gap: "10px",
         boxShadow: isExpanded ? "0 0 0 2px rgba(15,110,86,0.10)" : "none",
       }}
       onMouseEnter={e => { if (!isExpanded) e.currentTarget.style.borderColor = "#9FE1CB" }}
       onMouseLeave={e => { if (!isExpanded) e.currentTarget.style.borderColor = "#E5E7EB" }}
     >
-      {/* Top row */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
-            <span style={{ fontSize: "17px", fontWeight: 600, color: "#111827" }}>{word.no}</span>
+            <span style={{ fontSize: "17px", fontWeight: 600, color: "#111827" }}>{word.word_no}</span>
           </div>
-          {word.ua && (
-            <p style={{ fontSize: "13px", color: "#0F6E56", fontWeight: 500, margin: 0 }}>{word.ua}</p>
+          {word.word_ua && (
+            <p style={{ fontSize: "13px", color: "#0F6E56", fontWeight: 500, margin: 0 }}>{word.word_ua}</p>
           )}
           {word.note && !isExpanded && (
             <p style={{ fontSize: "12px", color: "#9CA3AF", fontStyle: "italic", marginTop: "5px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
@@ -72,10 +68,8 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
             </p>
           )}
         </div>
-
-        {/* Speak button */}
         <button
-          onClick={e => { e.stopPropagation(); speak(word.no) }}
+          onClick={e => { e.stopPropagation(); speak(word.word_no) }}
           style={{
             width: "32px", height: "32px", borderRadius: "50%",
             background: "#E1F5EE", border: "0.5px solid #9FE1CB",
@@ -88,7 +82,6 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
         >▶</button>
       </div>
 
-      {/* Expanded */}
       {isExpanded && (
         <div onClick={e => e.stopPropagation()} style={{ borderTop: "0.5px solid #F3F4F6", paddingTop: "10px", display: "flex", flexDirection: "column", gap: "8px" }}>
           {!saved ? (
@@ -97,12 +90,10 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
               onChange={e => setNoteValue(e.target.value)}
               placeholder="Додай нотатку..."
               style={{
-                width: "100%", background: "#F8F7F4",
-                border: "0.5px solid #E5E7EB", borderRadius: "10px",
-                padding: "8px 12px", fontSize: "13px", color: "#1F2937",
+                width: "100%", background: "#F8F7F4", border: "0.5px solid #E5E7EB",
+                borderRadius: "10px", padding: "8px 12px", fontSize: "13px", color: "#1F2937",
                 outline: "none", resize: "vertical", minHeight: "60px",
-                fontFamily: "inherit", transition: "border-color .12s",
-                boxSizing: "border-box",
+                fontFamily: "inherit", boxSizing: "border-box",
               }}
               onFocus={e => e.target.style.borderColor = "#0F6E56"}
               onBlur={e => e.target.style.borderColor = "#E5E7EB"}
@@ -112,29 +103,21 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
               Збережено ✓
             </div>
           )}
-
-          <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end", flexWrap: "wrap" }}>
-            <button
-              onClick={handleDelete}
-              style={{
-                fontSize: "12px", padding: "6px 12px", borderRadius: "8px",
-                cursor: "pointer", fontFamily: "inherit", transition: "all .12s",
-                background: confirmDelete ? "#DC2626" : "transparent",
-                border: `0.5px solid ${confirmDelete ? "#DC2626" : "#FECACA"}`,
-                color: confirmDelete ? "#fff" : "#EF4444",
-              }}
-            >{confirmDelete ? "Підтвердити" : "Видалити"}</button>
-
-            <button
-              onClick={onOpen}
-              style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "8px", cursor: "pointer", fontFamily: "inherit", background: "#F8F7F4", border: "0.5px solid #E5E7EB", color: "#374151" }}
-            >Відкрити →</button>
-
+          <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end" }}>
+            <button onClick={handleDelete} style={{
+              fontSize: "12px", padding: "6px 12px", borderRadius: "8px",
+              cursor: "pointer", fontFamily: "inherit",
+              background: confirmDelete ? "#DC2626" : "transparent",
+              border: `0.5px solid ${confirmDelete ? "#DC2626" : "#FECACA"}`,
+              color: confirmDelete ? "#fff" : "#EF4444",
+            }}>{confirmDelete ? "Підтвердити" : "Видалити"}</button>
+            <button onClick={onOpen} style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "8px", cursor: "pointer", fontFamily: "inherit", background: "#F8F7F4", border: "0.5px solid #E5E7EB", color: "#374151" }}>
+              Відкрити →
+            </button>
             {!saved && (
-              <button
-                onClick={handleSave}
-                style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "8px", cursor: "pointer", fontFamily: "inherit", background: "#0F6E56", border: "none", color: "#fff" }}
-              >Зберегти</button>
+              <button onClick={handleSave} style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "8px", cursor: "pointer", fontFamily: "inherit", background: "#0F6E56", border: "none", color: "#fff" }}>
+                Зберегти
+              </button>
             )}
           </div>
         </div>
@@ -143,44 +126,54 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
   )
 }
 
-// ── Dictionary (main page) ──────────────────────────────
+// ── Dictionary ──────────────────────────────────────────
 export default function Dictionary() {
   const navigate = useNavigate()
-  const [myWords, setMyWords] = useState(() => JSON.parse(localStorage.getItem("myWords") || "[]"))
+  const { user } = useAuth()
+  const [myWords, setMyWords] = useState([])
   const [expandedId, setExpandedId] = useState(null)
   const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
 
-  function saveNote(id, note) {
-    const updated = myWords.map(w => w.id === id ? { ...w, note } : w)
-    setMyWords(updated); localStorage.setItem("myWords", JSON.stringify(updated))
+  // Завантажити слова з Supabase
+  useEffect(() => {
+    if (!user) { setLoading(false); return }
+    supabase
+      .from("my_words")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("added_at", { ascending: false })
+      .then(({ data }) => {
+        setMyWords(data ?? [])
+        setLoading(false)
+      })
+  }, [user])
+
+  async function saveNote(id, note) {
+    setMyWords(prev => prev.map(w => w.id === id ? { ...w, note } : w))
+    await supabase.from("my_words").update({ note }).eq("id", id)
   }
 
-  function deleteWord(id) {
-    const updated = myWords.filter(w => w.id !== id)
-    setMyWords(updated); localStorage.setItem("myWords", JSON.stringify(updated))
+  async function deleteWord(id) {
+    setMyWords(prev => prev.filter(w => w.id !== id))
     setExpandedId(null)
+    await supabase.from("my_words").delete().eq("id", id)
   }
 
   const filtered = myWords.filter(w =>
     !search.trim() ||
-    w.no.toLowerCase().includes(search.toLowerCase()) ||
-    (w.ua || "").toLowerCase().includes(search.toLowerCase())
+    w.word_no.toLowerCase().includes(search.toLowerCase()) ||
+    (w.word_ua || "").toLowerCase().includes(search.toLowerCase())
   )
 
   const notesCount = myWords.filter(w => w.note).length
 
   return (
-    <main
-      onClick={() => setExpandedId(null)}
-      style={{ flex: 1, background: "#F8F7F4", padding: "24px 32px", minHeight: "100vh" }}
-    >
+    <main onClick={() => setExpandedId(null)} style={{ flex: 1, background: "#F8F7F4", padding: "24px 32px", minHeight: "100vh" }}>
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
-        {/* Header */}
         <div style={{ marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "22px", fontWeight: 600, color: "#111827", marginBottom: "4px" }}>
-            Мій словник
-          </h1>
+          <h1 style={{ fontSize: "22px", fontWeight: 600, color: "#111827", marginBottom: "4px" }}>Мій словник</h1>
           <p style={{ fontSize: "13px", color: "#9CA3AF", margin: 0 }}>
             {myWords.length} слів · {notesCount} з нотатками
           </p>
@@ -188,7 +181,6 @@ export default function Dictionary() {
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 260px", gap: "20px", alignItems: "start" }}>
 
-          {/* LEFT — words */}
           <div>
             {/* Search */}
             <div style={{ marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "12px", padding: "9px 14px" }}>
@@ -204,8 +196,18 @@ export default function Dictionary() {
               )}
             </div>
 
-            {/* Empty state */}
-            {myWords.length === 0 ? (
+            {/* States */}
+            {loading ? (
+              <div style={{ textAlign: "center", padding: "48px", color: "#9CA3AF", fontSize: "14px" }}>Завантаження...</div>
+            ) : !user ? (
+              <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
+                <p style={{ fontSize: "32px", marginBottom: "12px" }}>🔐</p>
+                <p style={{ fontSize: "15px", color: "#374151", fontWeight: 500, marginBottom: "6px" }}>Увійди щоб бачити словник</p>
+                <button onClick={() => navigate("/auth")} style={{ marginTop: "12px", padding: "10px 24px", background: "#0F6E56", color: "#fff", border: "none", borderRadius: "10px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
+                  Увійти
+                </button>
+              </div>
+            ) : myWords.length === 0 ? (
               <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
                 <p style={{ fontSize: "32px", marginBottom: "12px" }}>📘</p>
                 <p style={{ fontSize: "15px", color: "#374151", fontWeight: 500, marginBottom: "6px" }}>Словник поки порожній</p>
@@ -223,7 +225,7 @@ export default function Dictionary() {
                     word={word}
                     isExpanded={expandedId === word.id}
                     onToggle={() => setExpandedId(expandedId === word.id ? null : word.id)}
-                    onOpen={() => navigate(`/dictionary/${word.no}`)}
+                    onOpen={() => navigate(`/dictionary/${word.word_no}`)}
                     onSaveNote={note => saveNote(word.id, note)}
                     onDelete={() => deleteWord(word.id)}
                   />
@@ -232,7 +234,7 @@ export default function Dictionary() {
             )}
           </div>
 
-          {/* RIGHT — topics sidebar */}
+          {/* RIGHT — topics sidebar — без змін */}
           <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", overflow: "hidden", position: "sticky", top: "24px" }}>
             <div style={{ padding: "12px 16px", borderBottom: "0.5px solid #F3F4F6", display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{ fontSize: "15px" }}>📚</span>
@@ -240,9 +242,7 @@ export default function Dictionary() {
             </div>
             <div style={{ padding: "8px" }}>
               {TOPICS.map(topic => (
-                <div
-                  key={topic.id}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 10px", borderRadius: "9px", cursor: "pointer", transition: "background .12s" }}
+                <div key={topic.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 10px", borderRadius: "9px", cursor: "pointer", transition: "background .12s" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#F8F7F4"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                 >
@@ -251,8 +251,6 @@ export default function Dictionary() {
                 </div>
               ))}
             </div>
-
-            {/* Stats */}
             {myWords.length > 0 && (
               <div style={{ borderTop: "0.5px solid #F3F4F6", padding: "12px 16px" }}>
                 <p style={{ fontSize: "11px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: "8px", fontWeight: 500 }}>Прогрес</p>
