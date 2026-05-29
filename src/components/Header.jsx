@@ -1,14 +1,26 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+import { supabase } from "../lib/supabase"
 
 function Header({ onMenuClick }) {
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
   const [query, setQuery] = useState("")
   const [suggestions, setSuggestions] = useState([])
   const [myWordsResults, setMyWordsResults] = useState([])
   const [showResults, setShowResults] = useState(false)
+  const [profile, setProfile] = useState(null)
+  const [showMenu, setShowMenu] = useState(false)
   const debounceTimer = useRef(null)
-
+  useEffect(() => {
+    if (!user) { setProfile(null); return }
+      supabase
+      .from("profiles")
+      .select("name, streak")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => setProfile(data))
+  }, [user])
   useEffect(() => {
     if (!query.trim()) {
       setSuggestions([])
@@ -118,13 +130,56 @@ function Header({ onMenuClick }) {
 
       {/* Права частина */}
       <div className="flex items-center gap-3 shrink-0">
-        <div className="flex items-center gap-1.5 bg-teal-50 border border-teal-200 rounded-full px-3 py-1">
-          <span className="text-teal-700 text-xs">🔥</span>
-          <span className="text-teal-700 text-xs font-medium">7 днів</span>
-        </div>
-        <div className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center text-white text-xs font-semibold">
-          Д
-        </div>
+
+        {/* Streak — показуємо тільки якщо залогінений */}
+        {user && (
+          <div className="flex items-center gap-1.5 bg-teal-50 border border-teal-200 rounded-full px-3 py-1">
+            <span className="text-teal-700 text-xs">🔥</span>
+            <span className="text-teal-700 text-xs font-medium">
+              {profile?.streak ?? 0} днів
+            </span>
+          </div>
+        )}
+
+        {/* Аватар або кнопка входу */}
+        {user ? (
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(v => !v)}
+              className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center text-white text-xs font-semibold hover:bg-teal-800 transition-colors"
+            >
+              {profile?.name?.[0]?.toUpperCase() ?? "?"}
+            </button>
+
+            {showMenu && (
+              <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-[160px] overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="text-sm font-medium text-gray-900">{profile?.name ?? "..."}</p>
+                  <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                </div>
+                <button
+                  onClick={() => { setShowMenu(false); navigate("/account") }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  Профіль
+                </button>
+                <button
+                  onClick={() => { setShowMenu(false); logout() }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50"
+                >
+                  Вийти
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button
+            onClick={() => navigate("/auth")}
+            className="px-4 py-1.5 bg-teal-700 text-white text-xs font-semibold rounded-full hover:bg-teal-800 transition-colors"
+          >
+            Увійти
+          </button>
+        )}
       </div>
 
     </header>
