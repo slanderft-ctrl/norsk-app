@@ -108,8 +108,8 @@ function Header({ onMenuClick }) {
                     onMouseDown={() => selectWord(w.word_no)}
                     className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 flex items-center justify-between"
                   >
-                    <span className="text-gray-900 text-sm font-medium">{w.no}</span>
-                    <span className="text-gray-400 text-xs">{w.ua}</span>
+                    <span className="text-gray-900 text-sm font-medium">{w.word_no}</span>
+                      <span className="text-gray-400 text-xs">{w.word_ua}</span>
                   </div>
                 ))}
               </div>

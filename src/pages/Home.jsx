@@ -1,6 +1,9 @@
 import TopicCard from "../components/TopicCard"
 import { useNavigate } from "react-router-dom"
 import { topics } from "../data/topics"
+import { useState, useEffect } from "react"
+import { supabase } from "../lib/supabase"
+import { useAuth } from "../context/AuthContext"
 
 function StatCard({ icon, label, value, color }) {
   return (
@@ -34,7 +37,17 @@ function QuickCard({ icon, title, subtitle, onClick, color }) {
 function Home() {
   const navigate = useNavigate()
 
-  const myWords = JSON.parse(localStorage.getItem("myWords") || "[]")
+  const { user } = useAuth()
+  const [myWords, setMyWords] = useState([])
+  useEffect(() => {
+    if (!user) return
+      supabase
+      .from("my_words")
+      .select("id")
+      .eq("user_id", user.id)
+      .then(({ data }) => setMyWords(data ?? []))
+  }, [user])
+ 
   const doneTopic = topics.filter(t => t.status === "done").length
   const totalTopics = topics.length
 

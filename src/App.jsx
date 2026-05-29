@@ -13,6 +13,8 @@ import Home from "./pages/Home"
 import Dictionary from "./pages/Dictionary"
 import Listening from "./pages/Listening"
 
+import LevelTest from "./pages/LevelTest"
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -35,7 +37,7 @@ function App() {
           <Route path="/listening" element={<Listening />} />
           <Route path="/dictionary" element={<Dictionary />} />
           <Route path="/topic/:topicId/:subtopicId" element={<TopicPage />} />
-          
+          <Route path="/level-test" element={<LevelTest />} />
         </Routes>
 
       </div>

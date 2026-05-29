@@ -1,6 +1,8 @@
 import { useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import questionsRaw from "../data/questions.json"
+import { supabase } from "../lib/supabase"
+import { useAuth } from "../context/AuthContext"
 
 // ── CEFR mapping ────────────────────────────────────────
 const LEVELS = [
@@ -113,6 +115,7 @@ const TOTAL_QUESTIONS = 15
 
 export default function LevelTest() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [phase, setPhase] = useState("intro") // intro | test | checking | results
   const [theta, setTheta] = useState(3)
   const [answered, setAnswered] = useState(new Set())
@@ -173,8 +176,29 @@ export default function LevelTest() {
     setResults(newResults)
 
     if (newResults.length >= TOTAL_QUESTIONS || newAnswered.size >= questionsRaw.length) {
-      setTimeout(() => setPhase("results"), 900)
-    } else {
+  // Зберегти результат в Supabase
+  if (user) {
+    const finalCefr = getCEFR(newTheta)
+    const correctCount = newResults.filter(r => r.correct).length
+
+    await supabase.from("test_results").insert({
+      user_id: user.id,
+      cefr_level: finalCefr.label,
+      theta: Math.round(newTheta * 100) / 100,
+      correct: correctCount,
+      total: newResults.length,
+    })
+
+    // Оновити target_level в профілі якщо ще не встановлений
+    await supabase
+      .from("profiles")
+      .update({ target_level: finalCefr.label })
+      .eq("id", user.id)
+      .is("target_level", null)
+  }
+
+  setTimeout(() => setPhase("results"), 900)
+} else {
       setTimeout(() => {
         const next = selectNext(newTheta, newAnswered)
         setCurrent(next)
