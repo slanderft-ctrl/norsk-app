@@ -3,6 +3,8 @@ import { useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import WordPage from "./pages/WordPage"
 import TopicPage from "./pages/TopicPage"
+import AuthPage from "./pages/AuthPage"
+import AccountPage from "./pages/AccountPage"
 
 import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
@@ -27,12 +29,13 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/account" element={<AccountPage />} />
           <Route path="/dictionary/:word" element={<WordPage />} />
           <Route path="/listening" element={<Listening />} />
           <Route path="/dictionary" element={<Dictionary />} />
           <Route path="/topic/:topicId/:subtopicId" element={<TopicPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/account" element={<AccountPage />} />
+          
         </Routes>
 
       </div>
