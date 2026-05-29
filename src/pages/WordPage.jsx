@@ -3,334 +3,324 @@ import { useParams, useNavigate } from "react-router-dom"
 import verbsData from "../data/verbs.json"
 import AiWidget from "../components/AiWidget"
 
-function WordPage() {
+const TAG_MAP = {
+  "NOUN":"іменник","VERB":"дієслово","ADJ":"прикметник","ADV":"прислівник",
+  "Neuter":"середній рід","Masc":"чоловічий рід","Fem":"жіночий рід",
+  "Masc/Fem":"чол./жін. рід","Sing":"однина","Plur":"множина",
+  "Ind":"неозначена","Def":"означена","Inf":"інфінітив",
+  "Pres":"теперішній час","Past":"минулий час","Imp":"наказовий спосіб",
+  "Pass":"пасив","PerfPart":"перфект дієприкметник",
+  "<PerfPart>":"перфект","PresPart":"дієприслівник","<PresPart>":"дієприслівник",
+}
+const tt = tag => TAG_MAP[tag] || tag
+
+const POS_ICON = { NOUN:"📦", VERB:"⚡", ADJ:"🎨", ADV:"🔀" }
+const GENDER_COLOR = {
+  Masc:   { bg:"#EFF6FF", color:"#1D4ED8", label:"чоловічий рід" },
+  Fem:    { bg:"#FDF2F8", color:"#9D174D", label:"жіночий рід"   },
+  Neuter: { bg:"#F0FDF4", color:"#166534", label:"середній рід"  },
+}
+
+function SpeakBtn({ text }) {
+  const [playing, setPlaying] = useState(false)
+  function speak() {
+    speechSynthesis.cancel()
+    const utt = new SpeechSynthesisUtterance(text)
+    utt.lang = "nb-NO"; utt.rate = 0.9
+    const nora = speechSynthesis.getVoices().find(v => v.lang === "nb-NO")
+    if (nora) utt.voice = nora
+    utt.onstart = () => setPlaying(true)
+    utt.onend = () => setPlaying(false)
+    speechSynthesis.speak(utt)
+  }
+  return (
+    <button onClick={speak} title="Відтворити" style={{
+      background: playing ? "#E1F5EE" : "#F8F7F4",
+      border: `0.5px solid ${playing ? "#9FE1CB" : "#E5E7EB"}`,
+      borderRadius: "8px", width: "30px", height: "30px",
+      cursor: "pointer", color: playing ? "#0F6E56" : "#9CA3AF",
+      fontSize: "11px", display: "flex", alignItems: "center", justifyContent: "center",
+      transition: "all .15s", flexShrink: 0,
+    }}>
+      {playing ? "⏹" : "▶"}
+    </button>
+  )
+}
+
+function Section({ icon, title, children }) {
+  return (
+    <div style={{ background:"#fff", border:"0.5px solid #E5E7EB", borderRadius:"16px", overflow:"hidden" }}>
+      <div style={{ padding:"12px 18px", borderBottom:"0.5px solid #F3F4F6", display:"flex", alignItems:"center", gap:"8px" }}>
+        <span style={{ fontSize:"16px" }}>{icon}</span>
+        <span style={{ fontSize:"12px", fontWeight:600, color:"#6B7280", textTransform:"uppercase", letterSpacing:".06em" }}>{title}</span>
+      </div>
+      <div style={{ padding:"16px 18px" }}>{children}</div>
+    </div>
+  )
+}
+
+export default function WordPage() {
   const { word } = useParams()
   const navigate = useNavigate()
   const [wordData, setWordData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [addedToDict, setAddedToDict] = useState(false)
+  const [added, setAdded] = useState(false)
 
   useEffect(() => {
-    setWordData(null)
-    setLoading(true)
-
+    setWordData(null); setLoading(true)
     async function fetchWord() {
       try {
-        const res1 = await fetch(
-          `https://ord.uib.no/api/articles?w=${word}&dict=bm&scope=e`
-        )
-        const data1 = await res1.json()
-        const articleId = data1.articles.bm[0]
-        if (!articleId) throw new Error("Не знайдено")
-
-        const res2 = await fetch(
-          `https://ord.uib.no/bm/article/${articleId}.json`
-        )
-        const data2 = await res2.json()
-
+        const r1 = await fetch(`https://ord.uib.no/api/articles?w=${word}&dict=bm&scope=e`)
+        const d1 = await r1.json()
+        const id = d1.articles.bm[0]
+        if (!id) throw new Error("not found")
+        const r2 = await fetch(`https://ord.uib.no/bm/article/${id}.json`)
+        const d2 = await r2.json()
         const verbMatch = verbsData.verbs.find(v => v.no === word)
-        const translation = verbMatch?.ua || ""
-
-        const lemma = data2.lemmas?.[0]
-        const paradigmTags = lemma?.paradigm_info?.[0]?.tags || []
-        const partOfSpeech = paradigmTags[0] || ""
-        const gender = paradigmTags[1] || ""
-
-        function getArticle(pos, gen) {
-          if (pos === "VERB") return "å"
-          if (pos === "NOUN") {
-            if (gen === "Neuter") return "et"
-            if (gen === "Masc" || gen === "Fem") return "en"
+        const lemma = d2.lemmas?.[0]
+        const tags = lemma?.paradigm_info?.[0]?.tags || []
+        const pos = tags[0] || ""
+        const gender = tags[1] || ""
+        const article = pos === "VERB" ? "å" : pos === "NOUN"
+          ? (gender === "Neuter" ? "et" : "en") : ""
+        const isVerb = pos === "VERB"
+        const inflections = (lemma?.paradigm_info?.[0]?.inflection || []).filter(inf => {
+          if (!inf.word_form?.trim()) return false
+          const t = inf.tags || []
+          if (isVerb) {
+            const ok = t.some(x => ["Inf","Pres","Past","Imp"].includes(x))
+            const bad = t.some(x => ["Sing","Plur","Def","Ind"].includes(x))
+            return ok && !bad
           }
-          return ""
-        }
-        const article = getArticle(partOfSpeech, gender)
-
-        const isVerb = partOfSpeech === "VERB"
-
-        const inflections = (lemma?.paradigm_info?.[0]?.inflection || [])
-          .filter(inf => {
-            if (!inf.word_form || inf.word_form.trim() === "") return false
-            const tags = inf.tags || []
-            if (isVerb) {
-              const verbTags = ["Inf", "Pres", "Past", "Imp"]
-              const hasVerbTag = tags.some(t => verbTags.includes(t))
-              const isAdjectival = tags.includes("Sing") || tags.includes("Plur") || tags.includes("Def") || tags.includes("Ind")
-              return hasVerbTag && !isAdjectival
-            } else {
-              return true
-            }
-          })
-
-        function extractElements(elements, results = { explanations: [], examples: [] }) {
-          if (!elements) return results
-          for (const el of elements) {
-            if (el.type_ === "explanation" && el.content) {
-              results.explanations.push(el.content.replace(/\$/g, word))
-            } else if (el.type_ === "example" && el.quote?.content) {
-              results.examples.push(el.quote.content.replace(/\$/g, word))
-            } else if (el.elements) {
-              extractElements(el.elements, results)
-            }
-          }
-          return results
-        }
-
-        const parsed = extractElements(data2.body?.definitions)
-        const explanations = parsed.explanations
-        const examples = parsed.examples
-
-        const allInflections = (lemma?.paradigm_info || []).flatMap(p => p.inflection || [])
-        const perfPart = allInflections.find(inf =>
-          inf.tags?.some(t => t === "<PerfPart>") &&
-          inf.word_form &&
-          inf.tags.length === 1
-        )
-
-        setWordData({
-          word,
-          translation,
-          partOfSpeech,
-          gender,
-          article,
-          inflections,
-          perfPart: perfPart?.word_form || null,
-          explanations: [...new Set(explanations)]
-            .filter(exp => {
-              const wordCount = exp.split(word).length - 1
-              return wordCount <= 1
-            })
-            .slice(0, 3),
-          examples: [...new Set(examples)].slice(0, 3),
+          return true
         })
-
-      } catch(err) {
-        console.error(err)
-        setWordData(null)
-      } finally {
-        setLoading(false)
-      }
+        function extract(els, acc = {expl:[],ex:[]}) {
+          if (!els) return acc
+          for (const el of els) {
+            if (el.type_ === "explanation" && el.content) acc.expl.push(el.content.replace(/\$/g, word))
+            else if (el.type_ === "example" && el.quote?.content) acc.ex.push(el.quote.content.replace(/\$/g, word))
+            else if (el.elements) extract(el.elements, acc)
+          }
+          return acc
+        }
+        const { expl, ex } = extract(d2.body?.definitions)
+        const allInf = (lemma?.paradigm_info || []).flatMap(p => p.inflection || [])
+        const perf = allInf.find(inf => inf.tags?.some(t => t==="<PerfPart>") && inf.word_form && inf.tags.length===1)
+        setWordData({
+          word, translation: verbMatch?.ua || "",
+          pos, gender, article, inflections,
+          perfPart: perf?.word_form || null,
+          explanations: [...new Set(expl)].filter(e => (e.split(word).length-1)<=1).slice(0,3),
+          examples: [...new Set(ex)].slice(0,3),
+        })
+      } catch { setWordData(null) }
+      finally { setLoading(false) }
     }
-
     fetchWord()
   }, [word])
 
-  function speak(text) {
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = "nb-NO"
-    utterance.rate = 0.9
-    const voices = speechSynthesis.getVoices()
-    const norwegianVoice = voices.find(v => v.lang === "nb-NO")
-    if (norwegianVoice) utterance.voice = norwegianVoice
-    speechSynthesis.speak(utterance)
-  }
-
-  function translateTag(tag) {
-    const tags = {
-      "NOUN": "іменник",
-      "VERB": "дієслово",
-      "ADJ": "прикметник",
-      "ADV": "прислівник",
-      "Neuter": "середній рід",
-      "Masc": "чоловічий рід",
-      "Fem": "жіночий рід",
-      "Sing": "однина",
-      "Plur": "множина",
-      "Ind": "неозначена",
-      "Def": "означена",
-      "Inf": "інфінітив",
-      "Pres": "теперішній час",
-      "Past": "минулий час",
-      "Imp": "наказовий спосіб",
-      "Pass": "пасивний стан",
-      "PerfPart": "дієприкметник",
-      "<PerfPart>": "дієприкметник",
-      "PresPart": "дієприслівник",
-      "<PresPart>": "дієприслівник",
-      "Adj": "прикметник",
-      "Masc/Fem": "чол./жін. рід",
+  function addToDict() {
+    const saved = JSON.parse(localStorage.getItem("myWords") || "[]")
+    if (!saved.find(w => w.no === wordData.word)) {
+      saved.unshift({ id: Date.now(), no: wordData.word, ua: wordData.translation || "" })
+      localStorage.setItem("myWords", JSON.stringify(saved))
     }
-    return tags[tag] || tag
+    setAdded(true); setTimeout(() => setAdded(false), 2000)
   }
 
   if (loading) return (
-    <main className="flex-1 bg-gray-950 flex items-center justify-center">
-      <p className="text-gray-400">Завантаження...</p>
+    <main style={{ flex:1, background:"#F8F7F4", display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"12px" }}>
+        <div style={{ width:"32px", height:"32px", border:"3px solid #E5E7EB", borderTopColor:"#0F6E56", borderRadius:"50%", animation:"wpSpin .7s linear infinite" }} />
+        <p style={{ color:"#9CA3AF", fontSize:"14px" }}>Завантаження...</p>
+      </div>
+      <style>{`@keyframes wpSpin{to{transform:rotate(360deg)}}`}</style>
     </main>
   )
 
   if (!wordData) return (
-    <main className="flex-1 bg-gray-950 flex items-center justify-center">
-      <p className="text-gray-400">Слово не знайдено</p>
+    <main style={{ flex:1, background:"#F8F7F4", display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <div style={{ textAlign:"center" }}>
+        <p style={{ fontSize:"32px", marginBottom:"8px" }}>🔍</p>
+        <p style={{ color:"#6B7280", fontSize:"15px" }}>Слово «{word}» не знайдено</p>
+        <button onClick={() => navigate("/dictionary")} style={{ marginTop:"16px", background:"#0F6E56", color:"#fff", border:"none", borderRadius:"10px", padding:"8px 18px", fontSize:"14px", cursor:"pointer" }}>
+          ← До словника
+        </button>
+      </div>
     </main>
   )
 
-  return (
-    <main className="flex-1 bg-gray-950 p-6">
-      <div className="max-w-5xl mx-auto">
+  const gc = GENDER_COLOR[wordData.gender]
 
-        <button
-          onClick={() => navigate("/dictionary")}
-          className="text-gray-400 hover:text-white text-sm mb-6 flex items-center gap-2 transition-colors"
-        >
-          ← Назад до словника
+  return (
+    <main style={{ flex:1, background:"#F8F7F4", padding:"24px 32px", minHeight:"100vh" }}>
+      <style>{`@keyframes wpSpin{to{transform:rotate(360deg)}}`}</style>
+      <div style={{ maxWidth:"1100px", margin:"0 auto" }}>
+
+        {/* Back */}
+        <button onClick={() => navigate(-1)} style={{
+          background:"transparent", border:"none", cursor:"pointer",
+          color:"#9CA3AF", fontSize:"13px", display:"flex", alignItems:"center", gap:"5px",
+          marginBottom:"20px", padding:0,
+        }}>
+          ← Назад
         </button>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 320px", gap:"16px", alignItems:"start" }}>
 
-          <div className="col-span-2 flex flex-col gap-4">
+          {/* LEFT COLUMN */}
+          <div style={{ display:"flex", flexDirection:"column", gap:"14px" }}>
 
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-4xl font-medium text-white mb-2">
-                    {wordData.word}
-                  </h1>
+            {/* HERO CARD */}
+            <div style={{ background:"#fff", border:"0.5px solid #E5E7EB", borderRadius:"20px", padding:"24px 24px 20px", boxShadow:"0 1px 4px rgba(0,0,0,0.04)" }}>
+              <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:"16px" }}>
+
+                {/* Word info */}
+                <div style={{ flex:1 }}>
+                  {/* Article + word */}
                   {wordData.article && (
-                    <p className="text-lg text-gray-400 mb-1">
-                      {wordData.article} {wordData.word}
+                    <p style={{ fontSize:"14px", color:"#9CA3AF", marginBottom:"4px", fontWeight:500 }}>
+                      {wordData.article}
                     </p>
                   )}
-                  <p className="text-2xl text-blue-300 mb-3">
-                    {wordData.translation}
-                  </p>
-                  <div className="flex gap-2 flex-wrap">
-                    {wordData.partOfSpeech && (
-                      <span className="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full">
-                        {translateTag(wordData.partOfSpeech)}
+                  <h1 style={{ fontSize:"40px", fontWeight:600, color:"#111827", lineHeight:1.1, marginBottom:"8px" }}>
+                    {wordData.word}
+                  </h1>
+
+                  {/* Translation */}
+                  {wordData.translation && (
+                    <p style={{ fontSize:"20px", color:"#0F6E56", fontWeight:500, marginBottom:"14px" }}>
+                      {wordData.translation}
+                    </p>
+                  )}
+
+                  {/* Tags */}
+                  <div style={{ display:"flex", gap:"6px", flexWrap:"wrap" }}>
+                    {wordData.pos && (
+                      <span style={{ fontSize:"12px", fontWeight:500, padding:"3px 10px", borderRadius:"20px", background:"#F3F4F6", color:"#374151" }}>
+                        {POS_ICON[wordData.pos] || ""} {tt(wordData.pos)}
                       </span>
                     )}
-                    {wordData.gender && (
-                      <span className="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full">
-                        {translateTag(wordData.gender)}
+                    {gc && (
+                      <span style={{ fontSize:"12px", fontWeight:500, padding:"3px 10px", borderRadius:"20px", background:gc.bg, color:gc.color }}>
+                        {gc.label}
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-3">
-                  <button
-                    onClick={() => speak(wordData.word)}
-                    className="bg-blue-900 text-blue-300 rounded-full w-12 h-12 flex items-center justify-center hover:bg-blue-800 transition-colors shrink-0"
-                  >
-                    ▶
-                  </button>
+
+                {/* Actions */}
+                <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"10px" }}>
+                  {/* Big speak button */}
                   <button
                     onClick={() => {
-                      const saved = JSON.parse(localStorage.getItem("myWords") || "[]")
-                      const exists = saved.find(w => w.no === wordData.word)
-                      if (!exists) {
-                        saved.unshift({ id: Date.now(), no: wordData.word, ua: wordData.translation || "" })
-                        localStorage.setItem("myWords", JSON.stringify(saved))
-                      }
-                      setAddedToDict(true)
-                      setTimeout(() => setAddedToDict(false), 2000)
+                      const utt = new SpeechSynthesisUtterance(wordData.word)
+                      utt.lang="nb-NO"; utt.rate=0.9
+                      const n = speechSynthesis.getVoices().find(v=>v.lang==="nb-NO")
+                      if(n) utt.voice=n
+                      speechSynthesis.speak(utt)
                     }}
-                    className={`text-xs px-3 py-1.5 rounded-lg transition-all ${
-                      addedToDict
-                        ? "bg-green-900 text-green-400 border border-green-700"
-                        : "bg-green-950 text-green-400 border border-green-800 hover:bg-green-900"
-                    }`}
+                    style={{
+                      width:"52px", height:"52px", borderRadius:"50%",
+                      background:"#0F6E56", border:"none", cursor:"pointer",
+                      color:"#fff", fontSize:"18px", display:"flex", alignItems:"center", justifyContent:"center",
+                      boxShadow:"0 2px 8px rgba(15,110,86,0.25)", transition:"all .15s",
+                    }}
+                    title="Озвучити слово"
+                  >▶</button>
+
+                  {/* Add to dict */}
+                  <button
+                    onClick={addToDict}
+                    style={{
+                      fontSize:"12px", fontWeight:500, padding:"7px 14px", borderRadius:"10px",
+                      cursor:"pointer", transition:"all .15s", whiteSpace:"nowrap",
+                      background: added ? "#E1F5EE" : "#F8F7F4",
+                      border: `0.5px solid ${added ? "#9FE1CB" : "#E5E7EB"}`,
+                      color: added ? "#0F6E56" : "#6B7280",
+                    }}
                   >
-                    {addedToDict ? "Додано ✓" : "+ До словника"}
+                    {added ? "✓ Додано" : "+ Словник"}
                   </button>
                 </div>
               </div>
+            </div>
 
-              {wordData.explanations.length > 0 && (
-                <div className="border-t border-gray-800 pt-4 mb-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-                    Визначення (норвезькою)
-                  </p>
+            {/* DEFINITION */}
+            {wordData.explanations.length > 0 && (
+              <Section icon="📖" title="Визначення (норвезькою)">
+                <div style={{ display:"flex", flexDirection:"column", gap:"8px" }}>
                   {wordData.explanations.map((exp, i) => (
-                    <p key={i} className="text-gray-300 text-sm mb-1">
-                      {i + 1}. {exp}
-                    </p>
-                  ))}
-                </div>
-              )}
-
-              {wordData.examples.length > 0 && (
-                <div className="border-t border-gray-800 pt-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-                    Приклади
-                  </p>
-                  {wordData.examples.slice(0, 3).map((ex, i) => (
-                    <div key={i} className="flex items-center gap-2 mb-2">
-                      <p className="text-gray-300 text-sm italic flex-1">{ex}</p>
-                      <button
-                        onClick={() => speak(ex)}
-                        className="text-gray-500 hover:text-blue-300 text-xs transition-colors shrink-0"
-                      >
-                        ▶
-                      </button>
+                    <div key={i} style={{ display:"flex", gap:"10px", alignItems:"flex-start" }}>
+                      <span style={{ fontSize:"11px", fontWeight:700, color:"#0F6E56", background:"#E1F5EE", borderRadius:"6px", padding:"2px 7px", flexShrink:0, marginTop:"2px" }}>
+                        {i+1}
+                      </span>
+                      <p style={{ fontSize:"14px", color:"#374151", lineHeight:1.6, margin:0 }}>{exp}</p>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </Section>
+            )}
 
-            {/* ТАБЛИЦЯ ВІДМІНЮВАННЯ */}
+            {/* EXAMPLES */}
+            {wordData.examples.length > 0 && (
+              <Section icon="💬" title="Приклади використання">
+                <div style={{ display:"flex", flexDirection:"column", gap:"10px" }}>
+                  {wordData.examples.map((ex, i) => (
+                    <div key={i} style={{ display:"flex", alignItems:"center", gap:"10px", padding:"10px 14px", background:"#F8F7F4", borderRadius:"10px", border:"0.5px solid #E5E7EB" }}>
+                      <p style={{ flex:1, fontSize:"14px", color:"#1F2937", fontStyle:"italic", lineHeight:1.5, margin:0 }}>{ex}</p>
+                      <SpeakBtn text={ex} />
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {/* INFLECTIONS */}
             {(wordData.inflections.length > 0 || wordData.perfPart) && (
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">
-                  Відмінювання
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {wordData.inflections
-                    .filter(inf => inf.word_form && inf.word_form.trim() !== "")
-                    .map((inf, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2"
-                      >
-                        <span className="text-xs text-gray-400">
-                          {inf.tags
-                            .filter(tag => {
-                              if (inf.tags.some(t => t === "PerfPart" || t === "<PerfPart>") && tag === "Adj") return false
-                              if (inf.tags.some(t => t === "PresPart" || t === "<PresPart>") && tag === "Adj") return false
-                              return true
-                            })
-                            .map(translateTag)
-                            .join(", ")}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-white font-medium">
-                            {inf.word_form}
-                          </span>
-                          <button
-                            onClick={() => speak(inf.word_form)}
-                            className="text-gray-500 hover:text-blue-300 text-xs transition-colors"
-                          >
-                            ▶
-                          </button>
-                        </div>
+              <Section icon="📐" title="Відмінювання / Форми">
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"8px" }}>
+                  {wordData.inflections.filter(inf => inf.word_form?.trim()).map((inf, i) => (
+                    <div key={i} style={{
+                      display:"flex", alignItems:"center", justifyContent:"space-between",
+                      padding:"9px 13px", background:"#F8F7F4", borderRadius:"10px",
+                      border:"0.5px solid #E5E7EB",
+                    }}>
+                      <span style={{ fontSize:"11px", color:"#9CA3AF", flex:1 }}>
+                        {inf.tags.filter(t => {
+                          if (inf.tags.some(x=>x==="PerfPart"||x==="<PerfPart>"||x==="PresPart"||x==="<PresPart>") && t==="Adj") return false
+                          return true
+                        }).map(tt).join(", ")}
+                      </span>
+                      <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+                        <span style={{ fontSize:"14px", fontWeight:600, color:"#111827" }}>{inf.word_form}</span>
+                        <SpeakBtn text={inf.word_form} />
                       </div>
-                    ))}
+                    </div>
+                  ))}
 
                   {wordData.perfPart && (
-                    <div className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
-                      <span className="text-xs text-gray-400">перфект</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-white font-medium">
-                          har {wordData.perfPart}
-                        </span>
-                        <button
-                          onClick={() => speak(`har ${wordData.perfPart}`)}
-                          className="text-gray-500 hover:text-blue-300 text-xs transition-colors"
-                        >
-                          ▶
-                        </button>
+                    <div style={{
+                      display:"flex", alignItems:"center", justifyContent:"space-between",
+                      padding:"9px 13px", background:"#E1F5EE", borderRadius:"10px",
+                      border:"0.5px solid #9FE1CB",
+                    }}>
+                      <span style={{ fontSize:"11px", color:"#0F6E56", fontWeight:500 }}>перфект</span>
+                      <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+                        <span style={{ fontSize:"14px", fontWeight:600, color:"#0F6E56" }}>har {wordData.perfPart}</span>
+                        <SpeakBtn text={`har ${wordData.perfPart}`} />
                       </div>
                     </div>
                   )}
                 </div>
-              </div>
+              </Section>
             )}
 
           </div>
 
-          <div className="col-span-1">
-            <AiWidget context={{ word: wordData.word, partOfSpeech: wordData.partOfSpeech }} />
+          {/* RIGHT COLUMN — AI */}
+          <div style={{ position:"sticky", top:"24px" }}>
+            <AiWidget context={{ word: wordData.word, partOfSpeech: wordData.pos }} />
           </div>
 
         </div>
@@ -338,5 +328,3 @@ function WordPage() {
     </main>
   )
 }
-
-export default WordPage

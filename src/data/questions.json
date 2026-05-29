@@ -1,0 +1,341 @@
+[
+  {
+    "id": "a1-gram-01",
+    "level": 1,
+    "cefrLabel": "A1",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Vel riktig form: «Jeg ___ student.»",
+    "options": ["er", "være", "har", "ble"],
+    "answer": "er"
+  },
+  {
+    "id": "a1-gram-02",
+    "level": 1,
+    "cefrLabel": "A1",
+    "type": "fill",
+    "category": "morphology",
+    "question": "Skriv riktig artikkel: «___ hus er stort.» (nøytrum)",
+    "answer": "et",
+    "acceptedAnswers": ["et"],
+    "aiCheck": false
+  },
+  {
+    "id": "a1-gram-03",
+    "level": 1,
+    "cefrLabel": "A1",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Kva er riktig spørsmål? Du vil vita kva nokon heiter.",
+    "options": ["Hva heter du?", "Hvem er du heter?", "Du heter hva?", "Heter hva du?"],
+    "answer": "Hva heter du?"
+  },
+  {
+    "id": "a1-lex-01",
+    "level": 1,
+    "cefrLabel": "A1",
+    "type": "choice",
+    "category": "lexicon",
+    "question": "Kva tyder «å spise»?",
+    "options": ["їсти", "пити", "спати", "йти"],
+    "answer": "їсти"
+  },
+  {
+    "id": "a1-gram-04",
+    "level": 1,
+    "cefrLabel": "A1",
+    "type": "fill",
+    "category": "morphology",
+    "question": "Skriv rett form av «å bo» (presens): «Jeg ___ i Bergen.»",
+    "answer": "bor",
+    "acceptedAnswers": ["bor"],
+    "aiCheck": false
+  },
+  {
+    "id": "a1-lex-02",
+    "level": 1,
+    "cefrLabel": "A1",
+    "type": "choice",
+    "category": "lexicon",
+    "question": "Kva er norsk for «дякую»?",
+    "options": ["takk", "hei", "ja", "unnskyld"],
+    "answer": "takk"
+  },
+  {
+    "id": "a2-gram-01",
+    "level": 2,
+    "cefrLabel": "A2",
+    "type": "fill",
+    "category": "morphology",
+    "question": "Skriv preteritum av «å gå»: «Jeg ___ til skolen i går.»",
+    "answer": "gikk",
+    "acceptedAnswers": ["gikk"],
+    "aiCheck": false
+  },
+  {
+    "id": "a2-gram-02",
+    "level": 2,
+    "cefrLabel": "A2",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Vel riktig setning: «Eg har ___ boka.»",
+    "options": ["lest", "lese", "leser", "las"],
+    "answer": "lest"
+  },
+  {
+    "id": "a2-gram-03",
+    "level": 2,
+    "cefrLabel": "A2",
+    "type": "fill",
+    "category": "morphology",
+    "question": "Skriv riktig possessiv: «Det er boka ___» (mi — feminin, 1. person eintal)",
+    "answer": "mi",
+    "acceptedAnswers": ["mi", "min"],
+    "aiCheck": false
+  },
+  {
+    "id": "a2-lex-01",
+    "level": 2,
+    "cefrLabel": "A2",
+    "type": "choice",
+    "category": "lexicon",
+    "question": "Kva tyder «travel»?",
+    "options": ["зайнятий", "подорожувати", "повільний", "важкий"],
+    "answer": "зайнятий"
+  },
+  {
+    "id": "a2-gram-04",
+    "level": 2,
+    "cefrLabel": "A2",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Vel riktig negasjon: «Eg ___ norsk.»",
+    "options": ["snakker ikke", "ikke snakker", "snakker ingen", "ingen snakker"],
+    "answer": "snakker ikke"
+  },
+  {
+    "id": "a2-lex-02",
+    "level": 2,
+    "cefrLabel": "A2",
+    "type": "fill",
+    "category": "lexicon",
+    "question": "Fyll inn rett ord: «Eg er ___ fordi eg ikkje sov i natt.» (втомлений)",
+    "answer": "trøtt",
+    "acceptedAnswers": ["trøtt", "sliten", "utmattet"],
+    "aiCheck": true
+  },
+  {
+    "id": "b1-gram-01",
+    "level": 3,
+    "cefrLabel": "B1",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Vel riktig modalverb: «Du ___ ikkje røyke her. Det er forbode.»",
+    "options": ["kan ikke", "må ikke", "vil ikke", "skal ikke"],
+    "answer": "må ikke"
+  },
+  {
+    "id": "b1-gram-02",
+    "level": 3,
+    "cefrLabel": "B1",
+    "type": "fill",
+    "category": "grammar",
+    "question": "Sett inn rett konjunksjon: «Eg blei heime ___ eg var sjuk.» (тому що)",
+    "answer": "fordi",
+    "acceptedAnswers": ["fordi", "siden", "ettersom"],
+    "aiCheck": false
+  },
+  {
+    "id": "b1-gram-03",
+    "level": 3,
+    "cefrLabel": "B1",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Vel rett bisetningsrekkefølge: «Eg veit at ho ___ kvar dag.»",
+    "options": ["trener ikke", "ikkje trenar", "ikke trener", "trenar ikkje"],
+    "answer": "ikke trener"
+  },
+  {
+    "id": "b1-lex-01",
+    "level": 3,
+    "cefrLabel": "B1",
+    "type": "fill",
+    "category": "lexicon",
+    "question": "Kva verb passar her? «Møtet vart ___ til neste veke.» (перенесено)",
+    "answer": "utsatt",
+    "acceptedAnswers": ["utsatt", "flyttet", "forskjøvet"],
+    "aiCheck": true
+  },
+  {
+    "id": "b1-gram-04",
+    "level": 3,
+    "cefrLabel": "B1",
+    "type": "choice",
+    "category": "morphology",
+    "question": "Vel riktig refleksiv: «Han vaskar ___ kvar morgon.»",
+    "options": ["seg", "ham", "sin", "han"],
+    "answer": "seg"
+  },
+  {
+    "id": "b1-lex-02",
+    "level": 3,
+    "cefrLabel": "B1",
+    "type": "choice",
+    "category": "lexicon",
+    "question": "Kva tyder «å håndtere»?",
+    "options": ["справлятися/керувати", "торкатися", "допомагати", "розуміти"],
+    "answer": "справлятися/керувати"
+  },
+  {
+    "id": "b1-gram-05",
+    "level": 3,
+    "cefrLabel": "B1",
+    "type": "fill",
+    "category": "grammar",
+    "question": "Skriv riktig form: «Brevet ___ sendt i går.» (пасивний стан, preteritum av «å sende»)",
+    "answer": "ble",
+    "acceptedAnswers": ["ble", "vart", "var"],
+    "aiCheck": false
+  },
+  {
+    "id": "b2-gram-01",
+    "level": 4,
+    "cefrLabel": "B2",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Vel riktig kondisjonalform: «Viss eg hadde meir tid, ___ eg reist til Japan.»",
+    "options": ["hadde", "ville ha", "skulle ha", "kunne ha"],
+    "answer": "ville ha"
+  },
+  {
+    "id": "b2-lex-01",
+    "level": 4,
+    "cefrLabel": "B2",
+    "type": "fill",
+    "category": "lexicon",
+    "question": "Fyll inn rett ord: «Regjeringa la fram eit forslag om å ___ skatten.» (знизити/зменшити)",
+    "answer": "redusere",
+    "acceptedAnswers": ["redusere", "senke", "kutte"],
+    "aiCheck": true
+  },
+  {
+    "id": "b2-lex-02",
+    "level": 4,
+    "cefrLabel": "B2",
+    "type": "choice",
+    "category": "lexicon",
+    "question": "Kva tyder «å innebære»?",
+    "options": ["передбачати/означати", "включати в себе фізично", "заперечувати", "порівнювати"],
+    "answer": "передбачати/означати"
+  },
+  {
+    "id": "b2-gram-02",
+    "level": 4,
+    "cefrLabel": "B2",
+    "type": "fill",
+    "category": "grammar",
+    "question": "Gjer om til passiv: «Dei bygde huset i 1990.» → «Huset ___ bygd i 1990.»",
+    "answer": "ble",
+    "acceptedAnswers": ["ble", "vart", "var blitt"],
+    "aiCheck": false
+  },
+  {
+    "id": "b2-lex-03",
+    "level": 4,
+    "cefrLabel": "B2",
+    "type": "fill",
+    "category": "lexicon",
+    "question": "Vel rett ord: «Artikkelen gir eit ___ bilete av situasjonen.» (nuanced — нюансований, збалансований)",
+    "answer": "nyansert",
+    "acceptedAnswers": ["nyansert", "balansert", "grundig"],
+    "aiCheck": true
+  },
+  {
+    "id": "b2-gram-03",
+    "level": 4,
+    "cefrLabel": "B2",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Kva er riktig bruk av «selv om»?",
+    "options": [
+      "Selv om det regner, går jeg ut.",
+      "Selv om det regner men jeg går ut.",
+      "Jeg går ut, selv om fordi det regner.",
+      "Det regner selv om jeg går ut."
+    ],
+    "answer": "Selv om det regner, går jeg ut."
+  },
+  {
+    "id": "b2-lex-04",
+    "level": 4,
+    "cefrLabel": "B2",
+    "type": "choice",
+    "category": "lexicon",
+    "question": "Kva tyder «å tilrettelegge for»?",
+    "options": ["забезпечувати умови для", "організовувати проти", "пояснювати після", "готуватися до"],
+    "answer": "забезпечувати умови для"
+  },
+  {
+    "id": "c1-lex-01",
+    "level": 5,
+    "cefrLabel": "C1",
+    "type": "fill",
+    "category": "lexicon",
+    "question": "Fyll inn: «Ideen er ___ i norsk demokratisk tradisjon.» (вкорінена — глибоко закріплена)",
+    "answer": "forankret",
+    "acceptedAnswers": ["forankret", "dypt rotfestet", "innarbeidet"],
+    "aiCheck": true
+  },
+  {
+    "id": "c1-gram-01",
+    "level": 5,
+    "cefrLabel": "C1",
+    "type": "choice",
+    "category": "grammar",
+    "question": "Vel riktig setning med «å ha» + perfektum partisipp (supin):",
+    "options": [
+      "Eg har aldri sett noko liknande.",
+      "Eg har aldri sette noko liknande.",
+      "Eg hadde aldri sjå noko liknande.",
+      "Eg har aldri å sjå noko liknande."
+    ],
+    "answer": "Eg har aldri sett noko liknande."
+  },
+  {
+    "id": "c1-lex-02",
+    "level": 5,
+    "cefrLabel": "C1",
+    "type": "fill",
+    "category": "lexicon",
+    "question": "Kva ord passar: «Statsministeren gav eit ___ svar som ikkje svarte på spørsmålet.» (ухильна відповідь — слизька, ухильна)",
+    "answer": "unnvikende",
+    "acceptedAnswers": ["unnvikende", "vagt", "diffust", "tvetydig"],
+    "aiCheck": true
+  },
+  {
+    "id": "c1-lex-03",
+    "level": 5,
+    "cefrLabel": "C1",
+    "type": "choice",
+    "category": "lexicon",
+    "question": "Kva tyder «å belyse» i akademisk tekst?",
+    "options": [
+      "висвітлювати/розкривати (тему)",
+      "буквально освітлювати",
+      "спрощувати",
+      "ігнорувати"
+    ],
+    "answer": "висвітлювати/розкривати (тему)"
+  },
+  {
+    "id": "c1-gram-02",
+    "level": 5,
+    "cefrLabel": "C1",
+    "type": "fill",
+    "category": "grammar",
+    "question": "Fyll inn riktig form: «Dette er problemet ___ vi lenge har diskutert.» (відносний займенник)",
+    "answer": "som",
+    "acceptedAnswers": ["som"],
+    "aiCheck": false
+  }
+]

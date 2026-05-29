@@ -3,8 +3,9 @@ import { useState, useRef } from "react"
 const PUNCT = /^[\s\u2013\-!?.,;:«»""]+$/
 
 function tokenize(text) {
-  return text.split(/(\s+|[–\-!?.,;:«»""]+)/g).filter(Boolean)
+  return text.split(/(\n|[ \t]+|[–\-!?.,;:«»""]+)/g).filter(Boolean)
 }
+
 
 async function callClaude(messages, systemPrompt) {
   const res = await fetch("/api/Chat", {
@@ -37,7 +38,7 @@ export default function WordPopover({ text }) {
   }
 
   const startHide = () => {
-    hideTimer.current = setTimeout(() => { if (!chatMode) closeAll() }, 200)
+    hideTimer.current = setTimeout(() => { if (!chatMode) closeAll() }, 220)
   }
 
   const tokens = tokenize(text)
@@ -96,12 +97,21 @@ export default function WordPopover({ text }) {
     }
   }
 
-  const PW = chatMode ? 600 : phase === "answered" ? 260 : 130
+  const PW = chatMode ? 320 : phase === "answered" ? 280 : 120
 
   return (
-    <div style={{ position: "relative", lineHeight: 1.85, fontSize: "15px", color: "#e5e7eb", fontFamily: "system-ui, sans-serif" }}>
+    <div style={{
+      position: "relative",
+      lineHeight: 1.9,
+      fontSize: "15px",
+      color: "#1F2937",
+      fontFamily: "system-ui, -apple-system, sans-serif",
+    }}>
       {tokens.map((token, i) => {
-        if (PUNCT.test(token)) return <span key={i}>{token}</span>
+        if (token === "\n") return <br key={i} />
+        if (PUNCT.test(token)) return (
+          <span key={i} style={{ color: "#374151" }}>{token}</span>
+        )
         const active = activeIdx === i
         return (
           <span key={i} style={{ position: "relative", display: "inline" }}>
@@ -109,31 +119,33 @@ export default function WordPopover({ text }) {
               onMouseEnter={() => onWordEnter(i)}
               onMouseLeave={startHide}
               style={{
-                borderRadius: "3px", padding: "0 2px",
-                background: active ? "rgba(99,102,241,0.18)" : "transparent",
-                color: active ? "#a5b4fc" : "#e5e7eb",
-                cursor: "default", transition: "all .1s",
+                borderRadius: "4px",
+                padding: "1px 3px",
+                cursor: "default",
+                transition: "all .12s",
+                background: active ? "rgba(15,110,86,0.08)" : "transparent",
+                color: active ? "#0F6E56" : "#1F2937",
+                borderBottom: active ? "1.5px solid #0F6E56" : "1.5px solid transparent",
               }}
             >
               {token}
             </span>
 
-            {/* Попап рендериться inline прямо над словом */}
             {active && (
               <span
                 onMouseEnter={clearTimer}
                 onMouseLeave={() => { if (!chatMode) startHide() }}
                 style={{
                   position: "absolute",
-                  bottom: "calc(100% + 6px)",
+                  bottom: "calc(100% + 8px)",
                   left: "50%",
                   transform: "translateX(-50%)",
                   width: `${PW}px`,
-                  background: "#1e2435",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  borderRadius: "12px",
+                  background: "#ffffff",
+                  border: "0.5px solid #E5E7EB",
+                  borderRadius: "14px",
                   zIndex: 9999,
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
                   display: "inline-block",
                   verticalAlign: "bottom",
                   whiteSpace: "normal",
@@ -142,19 +154,28 @@ export default function WordPopover({ text }) {
               >
                 {/* IDLE */}
                 {phase === "idle" && (
-                  <button onClick={askWord}
-                    style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", background: "transparent", border: "none", padding: "10px 13px", cursor: "pointer", fontFamily: "inherit" }}
-                  >
-                    <span style={{ fontSize: "12px", color: "#818cf8" }}>✦</span>
-                    <span style={{ fontSize: "13px", fontWeight: 500, color: "#a5b4fc" }}>Що це?</span>
+                  <button onClick={askWord} style={{
+                    width: "100%", display: "flex", alignItems: "center", gap: "7px",
+                    background: "transparent", border: "none", padding: "10px 13px",
+                    cursor: "pointer", fontFamily: "inherit", borderRadius: "14px",
+                  }}>
+                    <span style={{ fontSize: "13px", color: "#0F6E56" }}>✦</span>
+                    <span style={{ fontSize: "13px", fontWeight: 600, color: "#0F6E56" }}>Що це?</span>
+                    <span style={{ fontSize: "11px", color: "#D1D5DB", marginLeft: "auto", fontStyle: "italic" }}>{token}</span>
                   </button>
                 )}
 
                 {/* LOADING */}
                 {phase === "loading" && (
-                  <div style={{ padding: "12px 13px", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontSize: "12px", color: "#818cf8" }}>✦</span>
-                    <span style={{ fontSize: "12px", color: "#9ca3af" }}>Думаю...</span>
+                  <div style={{ padding: "11px 13px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ fontSize: "13px", color: "#0F6E56" }}>✦</span>
+                    <span style={{ fontSize: "12px", color: "#6B7280" }}>Думаю...</span>
+                    <span style={{
+                      marginLeft: "auto", width: "14px", height: "14px",
+                      border: "2px solid #E5E7EB", borderTopColor: "#0F6E56",
+                      borderRadius: "50%", display: "inline-block",
+                      animation: "wpSpin .7s linear infinite",
+                    }} />
                   </div>
                 )}
 
@@ -163,36 +184,50 @@ export default function WordPopover({ text }) {
                   <div style={{ padding: "12px 13px" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "11px", color: "#818cf8" }}>✦</span>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#f3f4f6" }}>«{activeWord}»</span>
+                        <span style={{ fontSize: "12px", color: "#0F6E56" }}>✦</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#111827" }}>«{activeWord}»</span>
                       </div>
-                      <button onClick={() => { setChatMode(true); clearTimer() }}
-                        style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "5px", width: "22px", height: "22px", cursor: "pointer", color: "#6b7280", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                      >↗</button>
+                      <button onClick={() => { setChatMode(true); clearTimer() }} style={{
+                        background: "#F8F7F4", border: "0.5px solid #E5E7EB",
+                        borderRadius: "6px", width: "24px", height: "24px",
+                        cursor: "pointer", color: "#6B7280", fontSize: "12px",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>↗</button>
                     </div>
-                    <p style={{ fontSize: "12px", color: "#d1d5db", lineHeight: 1.55, margin: "0 0 10px" }}>
+
+                    <p style={{ fontSize: "12px", color: "#374151", lineHeight: 1.6, margin: "0 0 10px" }}>
                       {explanation}
                     </p>
+
                     {history.length > 2 && (
-                      <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: "8px", marginBottom: "8px" }}>
+                      <div style={{ borderTop: "0.5px solid #F3F4F6", paddingTop: "8px", marginBottom: "8px" }}>
                         {history.slice(2).map((m, i) => (
-                          <div key={i} style={{ fontSize: "11px", lineHeight: 1.5, marginBottom: "4px", color: m.role === "user" ? "#6b7280" : "#9ca3af" }}>
-                            {m.role === "user" && <span style={{ color: "#818cf8" }}>→ </span>}{m.content}
+                          <div key={i} style={{ fontSize: "11px", lineHeight: 1.5, marginBottom: "4px", color: m.role === "user" ? "#9CA3AF" : "#374151" }}>
+                            {m.role === "user" && <span style={{ color: "#0F6E56", marginRight: "3px" }}>→</span>}
+                            {m.content}
                           </div>
                         ))}
                       </div>
                     )}
-                    {loading && <div style={{ fontSize: "11px", color: "#6b7280", marginBottom: "8px" }}>✦ Думаю...</div>}
+
+                    {loading && <div style={{ fontSize: "11px", color: "#9CA3AF", marginBottom: "8px" }}>✦ Думаю...</div>}
+
                     {!loading && (
-                      <div style={{ display: "flex", flexDirection: "column", gap: "4px", borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: "8px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px", borderTop: "0.5px solid #F3F4F6", paddingTop: "8px" }}>
                         {suggestions.map((s, i) => (
-                          <button key={i} onClick={() => followUp(s)}
-                            style={{ textAlign: "left", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "7px", padding: "5px 8px", fontSize: "11px", color: "#9ca3af", cursor: "pointer", fontFamily: "inherit", lineHeight: 1.4 }}
-                          >{s}</button>
+                          <button key={i} onClick={() => followUp(s)} style={{
+                            textAlign: "left", background: "#F8F7F4",
+                            border: "0.5px solid #E5E7EB", borderRadius: "8px",
+                            padding: "6px 9px", fontSize: "11px", color: "#374151",
+                            cursor: "pointer", fontFamily: "inherit", lineHeight: 1.4,
+                          }}>{s}</button>
                         ))}
-                        <button onClick={() => { setChatMode(true); clearTimer() }}
-                          style={{ textAlign: "left", background: "transparent", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "7px", padding: "5px 8px", fontSize: "11px", color: "#6b7280", cursor: "pointer", fontFamily: "inherit" }}
-                        >Запитати своє →</button>
+                        <button onClick={() => { setChatMode(true); clearTimer() }} style={{
+                          textAlign: "left", background: "transparent",
+                          border: "0.5px solid #E5E7EB", borderRadius: "8px",
+                          padding: "6px 9px", fontSize: "11px", color: "#9CA3AF",
+                          cursor: "pointer", fontFamily: "inherit",
+                        }}>Запитати своє →</button>
                       </div>
                     )}
                   </div>
@@ -200,42 +235,64 @@ export default function WordPopover({ text }) {
 
                 {/* CHAT MODE */}
                 {chatMode && (
-                  <div style={{ display: "flex", flexDirection: "column", height: "320px" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 13px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div style={{ display: "flex", flexDirection: "column", height: "340px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 13px", borderBottom: "0.5px solid #F3F4F6" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "11px", color: "#818cf8" }}>✦</span>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#f3f4f6" }}>«{activeWord}»</span>
+                        <span style={{ fontSize: "12px", color: "#0F6E56" }}>✦</span>
+                        <span style={{ fontSize: "13px", fontWeight: 600, color: "#111827" }}>«{activeWord}»</span>
                       </div>
-                      <button onClick={closeAll} style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "15px", color: "#6b7280" }}>✕</button>
+                      <button onClick={closeAll} style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "16px", color: "#9CA3AF", lineHeight: 1 }}>✕</button>
                     </div>
+
                     <div style={{ flex: 1, overflowY: "auto", padding: "10px 13px", display: "flex", flexDirection: "column", gap: "8px" }}>
                       {history.map((m, i) => (
                         <div key={i} style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
-                          <div style={{ maxWidth: "85%", fontSize: "12px", lineHeight: 1.55, padding: "7px 10px", borderRadius: "10px", background: m.role === "user" ? "#4f46e5" : "rgba(255,255,255,0.06)", color: "#f3f4f6" }}>
-                            {m.content}
-                          </div>
+                          <div style={{
+                            maxWidth: "86%", fontSize: "12px", lineHeight: 1.55,
+                            padding: "7px 10px", borderRadius: "10px",
+                            background: m.role === "user" ? "#0F6E56" : "#F3F4F6",
+                            color: m.role === "user" ? "#fff" : "#1F2937",
+                          }}>{m.content}</div>
                         </div>
                       ))}
-                      {loading && <div style={{ fontSize: "12px", color: "#6b7280", padding: "7px 10px", background: "rgba(255,255,255,0.04)", borderRadius: "10px", alignSelf: "flex-start" }}>✦ Думаю...</div>}
+                      {loading && (
+                        <div style={{ alignSelf: "flex-start", fontSize: "12px", color: "#6B7280", padding: "7px 10px", background: "#F3F4F6", borderRadius: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ color: "#0F6E56" }}>✦</span> Думаю...
+                        </div>
+                      )}
                       {!loading && suggestions.length > 0 && (
                         <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                           {suggestions.map((s, i) => (
-                            <button key={i} onClick={() => followUp(s)}
-                              style={{ textAlign: "left", background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "7px", padding: "5px 8px", fontSize: "11px", color: "#9ca3af", cursor: "pointer", fontFamily: "inherit" }}
-                            >{s}</button>
+                            <button key={i} onClick={() => followUp(s)} style={{
+                              textAlign: "left", background: "#F8F7F4",
+                              border: "0.5px solid #E5E7EB", borderRadius: "8px",
+                              padding: "5px 9px", fontSize: "11px", color: "#374151",
+                              cursor: "pointer", fontFamily: "inherit",
+                            }}>{s}</button>
                           ))}
                         </div>
                       )}
                       <div ref={chatEndRef} />
                     </div>
-                    <div style={{ padding: "8px 10px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", gap: "6px" }}>
-                      <input value={chatInput} onChange={e => setChatInput(e.target.value)}
+
+                    <div style={{ padding: "8px 10px", borderTop: "0.5px solid #F3F4F6", display: "flex", gap: "6px" }}>
+                      <input
+                        value={chatInput}
+                        onChange={e => setChatInput(e.target.value)}
                         onKeyDown={e => { if (e.key === "Enter" && chatInput.trim() && !loading) followUp(chatInput) }}
                         placeholder={`Запитай про «${activeWord}»...`}
-                        style={{ flex: 1, fontSize: "12px", padding: "7px 10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", color: "#f3f4f6", fontFamily: "inherit", outline: "none" }}
+                        style={{
+                          flex: 1, fontSize: "12px", padding: "7px 10px",
+                          borderRadius: "8px", border: "0.5px solid #E5E7EB",
+                          background: "#F8F7F4", color: "#1F2937",
+                          fontFamily: "inherit", outline: "none",
+                        }}
+                        onFocus={e => e.target.style.borderColor = "#0F6E56"}
+                        onBlur={e => e.target.style.borderColor = "#E5E7EB"}
                       />
-                      <button onClick={() => { if (chatInput.trim() && !loading) followUp(chatInput) }}
-                        style={{ background: "#0F6B5E", border: "none", borderRadius: "8px", padding: "7px 11px", cursor: "pointer", fontSize: "13px", color: "#fff" }}
+                      <button
+                        onClick={() => { if (chatInput.trim() && !loading) followUp(chatInput) }}
+                        style={{ background: "#0F6E56", border: "none", borderRadius: "8px", padding: "7px 12px", cursor: "pointer", fontSize: "13px", color: "#fff" }}
                       >→</button>
                     </div>
                   </div>
@@ -245,6 +302,8 @@ export default function WordPopover({ text }) {
           </span>
         )
       })}
+
+      <style>{`@keyframes wpSpin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }

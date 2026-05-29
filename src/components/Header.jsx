@@ -15,24 +15,20 @@ function Header({ onMenuClick }) {
       setMyWordsResults([])
       return
     }
-
     const myWords = JSON.parse(localStorage.getItem("myWords") || "[]")
     const myResults = myWords.filter(w =>
       w.no.toLowerCase().includes(query.toLowerCase()) ||
       w.ua.toLowerCase().includes(query.toLowerCase())
     )
     setMyWordsResults(myResults)
-
     clearTimeout(debounceTimer.current)
     debounceTimer.current = setTimeout(async () => {
       try {
-        const res = await fetch(
-          `https://ord.uib.no/api/suggest?q=${query}&dict=bm&n=6`
-        )
+        const res = await fetch(`https://ord.uib.no/api/suggest?q=${query}&dict=bm&n=6`)
         const data = await res.json()
         const words = data?.a?.exact?.map(item => item[0]) || []
         setSuggestions(words)
-      } catch (err) {
+      } catch {
         setSuggestions([])
       }
     }, 300)
@@ -45,50 +41,56 @@ function Header({ onMenuClick }) {
   }
 
   return (
-    <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-4 relative">
+    <header className="bg-white border-b border-gray-200 px-5 py-0 flex items-center gap-4 relative h-14">
+
+      {/* Логотип */}
       <button
         onClick={onMenuClick}
-        className="flex flex-col gap-1 p-1 hover:opacity-70 shrink-0"
+        className="flex items-center gap-2 shrink-0 hover:opacity-80 transition-opacity"
       >
-        <span className="block w-5 h-0.5 bg-white"></span>
-        <span className="block w-5 h-0.5 bg-white"></span>
-        <span className="block w-5 h-0.5 bg-white"></span>
+        <div className="w-7 h-7 bg-teal-700 rounded-lg flex items-center justify-center">
+          <span className="text-white text-sm font-bold leading-none">✦</span>
+        </div>
+        <span className="text-gray-900 font-semibold text-sm tracking-tight">LinguAI</span>
       </button>
 
-      <span className="text-white font-medium shrink-0">Norsk App</span>
-
-      <div className="flex-1 max-w-xl mx-auto relative">
-        <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2">
-          <span className="text-gray-500 text-sm">🔍</span>
+      {/* Пошук */}
+      <div className="flex-1 max-w-lg mx-auto relative">
+        <div className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-full px-4 py-2 focus-within:border-teal-400 focus-within:bg-white transition-colors">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
           <input
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
             onFocus={() => setShowResults(true)}
             onBlur={() => setTimeout(() => setShowResults(false), 200)}
-            placeholder="Шукати слово..."
-            className="flex-1 bg-transparent text-white text-sm outline-none placeholder-gray-500"
+            placeholder="Шукати слово норвезькою..."
+            className="flex-1 bg-transparent text-gray-900 text-sm outline-none placeholder-gray-400"
           />
+          {query && (
+            <button onClick={() => setQuery("")} className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
+          )}
         </div>
 
+        {/* Dropdown */}
         {showResults && query.trim() && (suggestions.length > 0 || myWordsResults.length > 0) && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden z-50 shadow-2xl max-h-96 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl overflow-hidden z-50 shadow-lg max-h-80 overflow-y-auto">
 
             {myWordsResults.length > 0 && (
               <div>
-                <div className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wider bg-gray-950 border-b border-gray-800">
-                  Мій словник
+                <div className="px-4 py-2 text-xs text-gray-400 uppercase tracking-wider bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                  <span>📘</span> Мій словник
                 </div>
                 {myWordsResults.map(w => (
                   <div
                     key={w.id}
                     onMouseDown={() => selectWord(w.no)}
-                    className="px-4 py-2.5 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-0"
+                    className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 flex items-center justify-between"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-white text-sm font-medium">{w.no}</span>
-                      <span className="text-gray-400 text-xs">{w.ua}</span>
-                    </div>
+                    <span className="text-gray-900 text-sm font-medium">{w.no}</span>
+                    <span className="text-gray-400 text-xs">{w.ua}</span>
                   </div>
                 ))}
               </div>
@@ -96,14 +98,14 @@ function Header({ onMenuClick }) {
 
             {suggestions.length > 0 && (
               <div>
-                <div className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wider bg-gray-950 border-b border-gray-800">
-                  Словник bokmål
+                <div className="px-4 py-2 text-xs text-gray-400 uppercase tracking-wider bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                  <span>🇳🇴</span> Bokmål
                 </div>
                 {suggestions.map((word, i) => (
                   <div
                     key={i}
                     onMouseDown={() => selectWord(word)}
-                    className="px-4 py-2.5 text-gray-200 text-sm hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-0"
+                    className="px-4 py-2.5 text-gray-700 text-sm hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0"
                   >
                     {word}
                   </div>
@@ -114,9 +116,17 @@ function Header({ onMenuClick }) {
         )}
       </div>
 
-      <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-medium shrink-0">
-        І
+      {/* Права частина */}
+      <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 bg-teal-50 border border-teal-200 rounded-full px-3 py-1">
+          <span className="text-teal-700 text-xs">🔥</span>
+          <span className="text-teal-700 text-xs font-medium">7 днів</span>
+        </div>
+        <div className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center text-white text-xs font-semibold">
+          Д
+        </div>
       </div>
+
     </header>
   )
 }

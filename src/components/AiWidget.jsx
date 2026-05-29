@@ -1,171 +1,266 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import ReactMarkdown from "react-markdown"
 
-function AiWidget({ context }) {
-  const [expanded, setExpanded] = useState(false)
+export default function AiWidget({ context }) {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
+  const messagesEndRef = useRef(null)
 
   const suggestions = [
-    `Як використовувати "${context.word}" у реченні?`,
-    `Різниця між "${context.word}" і схожими словами?`,
-    `Приклади з "${context.word}" у повсякденній мові`,
+    `Як використовувати «${context.word}» у реченні?`,
+    `Чим ${context.word} відрізняється від схожих слів?`,
+    `Дай 3 приклади з «${context.word}» у розмовній мові`,
   ]
 
-  async function sendMessage(text) {
-    const messageText = text || input
-    if (!messageText.trim() || loading) return
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages, loading])
 
-    const newMessages = [...messages, { role: "user", content: messageText }]
+  async function send(text) {
+    const msg = (text || input).trim()
+    if (!msg || loading) return
+    const newMessages = [...messages, { role: "user", content: msg }]
     setMessages(newMessages)
     setInput("")
     setLoading(true)
-
     try {
-      const response = await fetch("/api/Chat", {
+      const res = await fetch("/api/Chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: newMessages.map(m => ({
-            role: m.role,
-            content: m.content
-          })),
-          systemPrompt: `Ти AI-асистент для вивчення норвезької мови. 
+          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+          systemPrompt: `Ти AI-асистент для вивчення норвезької мови.
 Зараз користувач вивчає слово: "${context.word}" (${context.partOfSpeech || ""}).
 Відповідай українською мовою. Будь стислим і корисним.
 Якщо пояснюєш граматику — наводь приклади норвезькою з перекладом.`,
         }),
       })
-
-      const data = await response.json()
-      const aiText = data.content?.[0]?.text || "Не вдалося отримати відповідь."
-
-      setMessages(prev => [...prev, { role: "assistant", content: aiText }])
-    } catch (err) {
-      setMessages(prev => [...prev, { role: "assistant", content: "Помилка з'єднання. Спробуй ще раз." }])
+      const data = await res.json()
+      setMessages(prev => [...prev, { role: "assistant", content: data.content?.[0]?.text || "Не вдалося отримати відповідь." }])
+    } catch {
+      setMessages(prev => [...prev, { role: "assistant", content: "Помилка з'єднання." }])
     } finally {
       setLoading(false)
     }
   }
 
-  function handleKeyDown(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }
+  const isEmpty = messages.length === 0
 
   return (
-    <>
-      {expanded && (
-        <div
-          className="fixed inset-0 bg-black/30 z-10"
-          onClick={() => setExpanded(false)}
-        />
+    <div style={{
+      background: "#fff",
+      border: "0.5px solid #E5E7EB",
+      borderRadius: "20px",
+      overflow: "hidden",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+
+      {/* Header */}
+      <div style={{
+        padding: "13px 18px",
+        borderBottom: "0.5px solid #F3F4F6",
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        background: "#FAFAF9",
+      }}>
+        <div style={{
+          width: "28px", height: "28px",
+          background: "#E1F5EE", borderRadius: "8px",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "14px",
+        }}>✦</div>
+        <div>
+          <p style={{ fontSize: "13px", fontWeight: 600, color: "#111827", margin: 0 }}>AI-асистент</p>
+          <p style={{ fontSize: "11px", color: "#9CA3AF", margin: 0 }}>
+            Запитай про «{context.word}»
+          </p>
+        </div>
+      </div>
+
+      {/* Suggestions — показуємо тільки якщо чат порожній */}
+      {isEmpty && (
+        <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "7px" }}>
+          <p style={{ fontSize: "11px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: ".06em", fontWeight: 500, marginBottom: "2px" }}>
+            Підказки
+          </p>
+          {suggestions.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => send(s)}
+              style={{
+                textAlign: "left",
+                background: "#F8F7F4",
+                border: "0.5px solid #E5E7EB",
+                borderRadius: "10px",
+                padding: "9px 12px",
+                fontSize: "12px",
+                color: "#374151",
+                cursor: "pointer",
+                fontFamily: "inherit",
+                lineHeight: 1.4,
+                transition: "all .12s",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "#E1F5EE"
+                e.currentTarget.style.borderColor = "#9FE1CB"
+                e.currentTarget.style.color = "#0F6E56"
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "#F8F7F4"
+                e.currentTarget.style.borderColor = "#E5E7EB"
+                e.currentTarget.style.color = "#374151"
+              }}
+            >
+              <span style={{ color: "#0F6E56", marginRight: "5px" }}>✦</span>
+              {s}
+            </button>
+          ))}
+        </div>
       )}
 
-      <div className={`
-        bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col gap-3
-        transition-all duration-200
-        ${expanded
-          ? "fixed top-20 right-6 w-80 z-20 shadow-2xl border-blue-700"
-          : "self-start cursor-pointer hover:border-gray-600"
-        }
-      `}>
-
-        <p className="text-xs text-gray-500 uppercase tracking-wider">
-          Запитати ШІ
-        </p>
-
-        {!expanded && (
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-gray-400">Можливо тебе цікавить:</p>
-            {suggestions.map((s, i) => (
-              <div
-                key={i}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setExpanded(true)
-                  sendMessage(s)
-                }}
-                className="text-xs text-gray-300 bg-gray-800 hover:bg-blue-950 hover:text-blue-300 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-              >
-                {s}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {expanded && (
-          <div className="flex flex-col gap-2 max-h-72 overflow-y-auto">
-            {messages.length === 0 && (
-              <p className="text-xs text-gray-400">
-                Вивчаєш <span className="text-blue-300 font-medium">{context.word}</span> — чим можу допомогти?
-              </p>
-            )}
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`text-sm px-3 py-2 rounded-lg ${
-                  msg.role === "user"
-                    ? "bg-blue-900 text-blue-100 self-end ml-4"
-                    : "bg-gray-800 text-gray-200 self-start mr-4"
-                }`}
-              >
-                {msg.role === "assistant"
-                  ? <div className="prose prose-invert prose-sm max-w-none text-gray-200 text-sm">
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
-                  </div>
-                  : msg.content
+      {/* Messages */}
+      {!isEmpty && (
+        <div style={{
+          padding: "12px 14px",
+          maxHeight: "320px",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}>
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                justifyContent: m.role === "user" ? "flex-end" : "flex-start",
+              }}
+            >
+              {m.role === "assistant" && (
+                <div style={{
+                  width: "22px", height: "22px", borderRadius: "6px",
+                  background: "#E1F5EE", flexShrink: 0,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "11px", color: "#0F6E56", marginRight: "7px", marginTop: "2px",
+                }}>✦</div>
+              )}
+              <div style={{
+                maxWidth: "82%",
+                fontSize: "13px",
+                lineHeight: 1.6,
+                padding: "8px 12px",
+                borderRadius: m.role === "user" ? "12px 12px 4px 12px" : "12px 12px 12px 4px",
+                background: m.role === "user" ? "#0F6E56" : "#F3F4F6",
+                color: m.role === "user" ? "#fff" : "#1F2937",
+              }}>
+                {m.role === "assistant"
+                  ? <div style={{ fontSize: "13px" }}>
+                      <ReactMarkdown>{m.content}</ReactMarkdown>
+                    </div>
+                  : m.content
                 }
               </div>
-            ))}
-            {loading && (
-              <div className="bg-gray-800 text-gray-400 text-sm px-3 py-2 rounded-lg self-start">
-                Думаю...
-              </div>
-            )}
-          </div>
-        )}
+            </div>
+          ))}
 
-        <div className="flex gap-2 items-center">
-          <input
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onClick={() => setExpanded(true)}
-            placeholder={`Запитай про ${context.word}...`}
-            className="flex-1 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg outline-none border border-gray-700 focus:border-blue-500"
-          />
+          {loading && (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{
+                width: "22px", height: "22px", borderRadius: "6px",
+                background: "#E1F5EE", display: "flex", alignItems: "center",
+                justifyContent: "center", fontSize: "11px", color: "#0F6E56",
+              }}>✦</div>
+              <div style={{
+                background: "#F3F4F6", borderRadius: "12px 12px 12px 4px",
+                padding: "8px 12px", display: "flex", alignItems: "center", gap: "4px",
+              }}>
+                {[0,1,2].map(i => (
+                  <span key={i} style={{
+                    width: "5px", height: "5px", borderRadius: "50%",
+                    background: "#9CA3AF", display: "inline-block",
+                    animation: `waDot .9s ease-in-out ${i*0.2}s infinite`,
+                  }} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+
+      {/* Clear button якщо є повідомлення */}
+      {!isEmpty && (
+        <div style={{ padding: "0 14px 6px", display: "flex", justifyContent: "flex-end" }}>
           <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setExpanded(true)
-              sendMessage()
+            onClick={() => setMessages([])}
+            style={{
+              background: "transparent", border: "none", cursor: "pointer",
+              fontSize: "11px", color: "#9CA3AF",
             }}
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-xs transition-colors"
           >
-            →
+            очистити чат
           </button>
         </div>
+      )}
 
-        {expanded && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setExpanded(false)
-            }}
-            className="text-xs text-gray-500 hover:text-gray-300 transition-colors text-center"
-          >
-            закрити ✕
-          </button>
-        )}
+      {/* Input */}
+      <div style={{
+        padding: "10px 12px",
+        borderTop: "0.5px solid #F3F4F6",
+        display: "flex",
+        gap: "7px",
+        alignItems: "center",
+      }}>
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send() } }}
+          placeholder={`Запитай про «${context.word}»...`}
+          style={{
+            flex: 1,
+            background: "#F8F7F4",
+            border: "0.5px solid #E5E7EB",
+            borderRadius: "10px",
+            padding: "8px 12px",
+            fontSize: "13px",
+            color: "#1F2937",
+            outline: "none",
+            fontFamily: "inherit",
+            transition: "border-color .12s",
+          }}
+          onFocus={e => e.target.style.borderColor = "#0F6E56"}
+          onBlur={e => e.target.style.borderColor = "#E5E7EB"}
+        />
+        <button
+          onClick={() => send()}
+          disabled={!input.trim() || loading}
+          style={{
+            background: input.trim() && !loading ? "#0F6E56" : "#F3F4F6",
+            border: "none",
+            borderRadius: "10px",
+            width: "36px", height: "36px",
+            cursor: input.trim() && !loading ? "pointer" : "default",
+            color: input.trim() && !loading ? "#fff" : "#9CA3AF",
+            fontSize: "14px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all .12s",
+            flexShrink: 0,
+          }}
+        >→</button>
       </div>
-    </>
+
+      <style>{`
+        @keyframes waDot {
+          0%,80%,100% { transform: scale(.7); opacity:.4 }
+          40% { transform: scale(1.1); opacity:1 }
+        }
+      `}</style>
+    </div>
   )
 }
-
-export default AiWidget

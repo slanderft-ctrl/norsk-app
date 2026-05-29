@@ -16,7 +16,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-950 text-white flex flex-col">
+      <div className="min-h-screen bg-[#F8F7F4] text-gray-900 flex flex-col">
 
         <Header onMenuClick={() => setMenuOpen(true)} />
 
@@ -31,6 +31,8 @@ function App() {
           <Route path="/listening" element={<Listening />} />
           <Route path="/dictionary" element={<Dictionary />} />
           <Route path="/topic/:topicId/:subtopicId" element={<TopicPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/account" element={<AccountPage />} />
         </Routes>
 
       </div>
