@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { topics } from "../data/topics"
 import WordPopover from "../components/WordPopover"
 
-const STAGES = { READ: "read", QUIZ: "quiz" }
+const STAGES = { READ: "read", GRAMMAR: "grammar", QUIZ: "quiz" }
 
 const TYPE_CONFIG = {
   question:  { label: "Питання до тексту", icon: "💬", accent: "#185FA5", bg: "#E6F1FB", border: "#B8D6F5" },
@@ -17,7 +17,8 @@ export default function TopicPage() {
 
   const topic = topics.find(t => t.id === Number(topicId))
   const subtopic = topic?.subtopics.find(s => s.id === subtopicId)
-
+  const [grammarAnswers, setGrammarAnswers] = useState({})
+  const [grammarChecked, setGrammarChecked] = useState(false)
   const [stage, setStage] = useState(STAGES.READ)
   const [showResults, setShowResults] = useState(false)
   const [flipping, setFlipping] = useState(false)
@@ -79,9 +80,9 @@ export default function TopicPage() {
     speechSynthesis.speak(utt)
   }
 
-  function goQuiz() {
+  function goTo(nextStage) {
     setFlipping(true)
-    setTimeout(() => { setStage(STAGES.QUIZ); setFlipping(false) }, 300)
+    setTimeout(() => { setStage(nextStage); setFlipping(false) }, 300)
   }
 
   function nextSubtopic() {
@@ -91,6 +92,7 @@ export default function TopicPage() {
       localStorage.setItem("topicProgress", JSON.stringify({ topicId: Number(topicId), subtopicId: next.id }))
       setStage(STAGES.READ); setQuizIndex(0); setAnswers({})
       setShowResults(false); setAiFeedback({}); setAiFeedbackLoading({})
+      setGrammarAnswers({}); setGrammarChecked(false) 
       navigate(`/topic/${topicId}/${next.id}`)
     } else {
       localStorage.removeItem("topicProgress")
@@ -149,6 +151,7 @@ export default function TopicPage() {
           <div className="flex items-center gap-2 mt-3">
             {[
               { key: STAGES.READ, icon: "📖", label: "Читання" },
+              { key: STAGES.GRAMMAR, icon: "📐", label: "Граматика" },
               { key: STAGES.QUIZ, icon: "✏️", label: "Вправи" },
             ].map(s => (
               <div
@@ -242,17 +245,193 @@ export default function TopicPage() {
                   Наведи на слово для пояснення ✦
                 </p>
                 <button
-                  onClick={goQuiz}
+                  onClick={() => goTo(subtopic.grammar ? STAGES.GRAMMAR : STAGES.QUIZ)}
                   className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium text-white transition-colors"
                   style={{ background: "#0F6E56" }}
                   onMouseEnter={e => e.target.style.background = "#0D5E48"}
                   onMouseLeave={e => e.target.style.background = "#0F6E56"}
                 >
-                  ✏️ До вправ →
+                  {subtopic.grammar ? "📐 До граматики →" : "✏️ До вправ →"}
                 </button>
               </div>
             </div>
           )}
+
+          {/* ══ STAGE: GRAMMAR ══════════════════════════════════ */}
+          {stage === STAGES.GRAMMAR && subtopic.grammar && (() => {
+            const g = subtopic.grammar
+
+            // нормалізація відповіді для порівняння
+            const norm = s => (s || "").trim().toLowerCase().replace(/[.,!?]/g, "").replace(/\s+/g, " ")
+
+            // індексація вправ
+            const exItems = g.exercises.map((ex, i) => ({ ...ex, idx: i }))
+
+            const checkAnswer = (ex) => {
+              const user = grammarAnswers[ex.idx]
+              return norm(user) === norm(ex.answer)
+            }
+            const correctN = exItems.filter(checkAnswer).length
+
+            return (
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+
+                {/* Header */}
+                <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+                  <span className="text-base">📐</span>
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Граматика</span>
+                  <span className="ml-auto text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: "#E6F1FB", color: "#185FA5" }}>
+                    {g.topic}
+                  </span>
+                </div>
+
+                <div className="p-5 flex flex-col gap-4">
+
+                  {/* Rule blocks */}
+                  {g.blocks.map((b, i) => (
+                    <div key={i} className="rounded-xl p-4" style={{ background: "#F8F7F4", border: "0.5px solid #E5E7EB" }}>
+                      <p className="text-sm font-semibold text-gray-900 mb-1.5">{b.heading}</p>
+                      <p className="text-sm text-gray-600 leading-relaxed">{b.text}</p>
+                    </div>
+                  ))}
+
+                  {/* Examples */}
+                  <div className="rounded-xl p-4" style={{ background: "#E1F5EE", border: "0.5px solid #9FE1CB" }}>
+                    <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "#0F6E56" }}>Приклади</p>
+                    <div className="flex flex-col gap-2.5">
+                      {g.examples.map((ex, i) => {
+                        // підсвічуємо слово hi всередині норвезького прикладу
+                        const parts = ex.hi ? ex.no.split(ex.hi) : [ex.no]
+                        return (
+                          <div key={i} className="flex flex-col gap-0.5">
+                            <p className="text-sm text-gray-900">
+                              {ex.hi && parts.length > 1 ? (
+                                <>
+                                  {parts[0]}
+                                  <span className="font-bold" style={{ color: "#0F6E56", background: "#C9EEDF", borderRadius: "4px", padding: "0 3px" }}>{ex.hi}</span>
+                                  {parts.slice(1).join(ex.hi)}
+                                </>
+                              ) : ex.no}
+                            </p>
+                            <p className="text-xs text-gray-500">{ex.ua}</p>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Exercises */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">Вправи на правило</p>
+                    <div className="flex flex-col gap-3">
+                      {exItems.map(ex => {
+                        const correct = checkAnswer(ex)
+                        const showCheck = grammarChecked
+                        return (
+                          <div key={ex.idx} className="rounded-xl p-4" style={{
+                            border: `0.5px solid ${showCheck ? (correct ? "#BBF7D0" : "#FECACA") : "#E5E7EB"}`,
+                            background: showCheck ? (correct ? "#F0FFF4" : "#FFF5F5") : "#fff",
+                          }}>
+                            <p className="text-xs text-gray-400 mb-2">{ex.task}</p>
+
+                            {/* wordorder — показуємо перемішані слова */}
+                            {ex.type === "wordorder" && (
+                              <div className="flex flex-wrap gap-1.5 mb-3">
+                                {ex.scrambled.map((w, k) => (
+                                  <span key={k} className="text-xs px-2 py-1 rounded-lg" style={{ background: "#F0EAFC", color: "#6B3FA0" }}>{w}</span>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* conjugate — показуємо речення з пропуском */}
+                            {ex.type === "conjugate" && (
+                              <p className="text-sm text-gray-900 mb-3">{ex.sentence}</p>
+                            )}
+
+                            <input
+                              value={grammarAnswers[ex.idx] || ""}
+                              onChange={e => setGrammarAnswers(prev => ({ ...prev, [ex.idx]: e.target.value }))}
+                              disabled={showCheck}
+                              placeholder={ex.type === "wordorder" ? "Запиши речення повністю..." : "Відповідь..."}
+                              className="w-full rounded-lg px-3 py-2 text-sm text-gray-900 outline-none"
+                              style={{ background: "#F8F7F4", border: `1.5px solid ${grammarAnswers[ex.idx] ? "#185FA5" : "#E5E7EB"}` }}
+                            />
+
+                            {showCheck && !correct && (
+                              <p className="text-xs mt-2" style={{ color: "#0F6E56" }}>
+                                Правильно: <strong>{ex.answer}</strong>
+                              </p>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* Check button / result */}
+                    {!grammarChecked ? (
+                      <button
+                        onClick={() => setGrammarChecked(true)}
+                        className="mt-3 w-full py-2.5 rounded-xl text-sm font-medium text-white"
+                        style={{ background: "#185FA5" }}
+                      >
+                        Перевірити вправи
+                      </button>
+                    ) : (
+                      <div className="mt-3 text-center text-sm text-gray-500">
+                        {correctN} з {exItems.length} правильно
+                        <button
+                          onClick={() => { setGrammarChecked(false); setGrammarAnswers({}) }}
+                          className="ml-2 text-xs underline"
+                          style={{ color: "#185FA5" }}
+                        >
+                          ще раз
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Extra block: pronunciation / lexicon */}
+                  {g.extra && (
+                    <div className="rounded-xl p-4" style={{
+                      background: g.extra.type === "pronunciation" ? "#FAEEDA" : "#E6F1FB",
+                      border: `0.5px solid ${g.extra.type === "pronunciation" ? "#F0C97A" : "#B8D6F5"}`,
+                    }}>
+                      <p className="text-xs font-medium uppercase tracking-wider mb-1" style={{ color: g.extra.type === "pronunciation" ? "#854F0B" : "#185FA5" }}>
+                        {g.extra.type === "pronunciation" ? "🗣 " : "📚 "}{g.extra.title}
+                      </p>
+                      {g.extra.intro && <p className="text-xs text-gray-600 mb-3 leading-relaxed">{g.extra.intro}</p>}
+                      <div className="flex flex-col gap-2">
+                        {g.extra.items.map((it, i) => (
+                          <div key={i} className="flex items-baseline gap-2 text-sm">
+                            <span className="font-semibold text-gray-900 shrink-0">{it.word}</span>
+                            {it.read && <span className="text-gray-500 shrink-0">[{it.read}]</span>}
+                            <span className="text-xs text-gray-500">{it.note}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+
+                {/* Footer */}
+                <div className="px-5 py-4 border-t border-gray-100 flex justify-between items-center">
+                  <button onClick={() => goTo(STAGES.READ)} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+                    ← До тексту
+                  </button>
+                  <button
+                    onClick={() => goTo(STAGES.QUIZ)}
+                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium text-white transition-colors"
+                    style={{ background: "#0F6E56" }}
+                    onMouseEnter={e => e.target.style.background = "#0D5E48"}
+                    onMouseLeave={e => e.target.style.background = "#0F6E56"}
+                  >
+                    ✏️ До вправ →
+                  </button>
+                </div>
+              </div>
+            )
+          })()}
 
           {/* ══ STAGE: QUIZ ══════════════════════════════════ */}
           {stage === STAGES.QUIZ && (() => {

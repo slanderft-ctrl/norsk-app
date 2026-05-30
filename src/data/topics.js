@@ -2,6 +2,12 @@
 // Поки теми 1–3, по 5 підтем кожна (15 текстів). Усього має бути 15 тем (75 текстів)
 // Формат сумісний з topics.js
 
+import {
+  grammar_1_1, grammar_1_2, grammar_1_3, grammar_1_4, grammar_1_5,
+  grammar_2_1, grammar_2_2, grammar_2_3, grammar_2_4, grammar_2_5,
+  grammar_3_1, grammar_3_2, grammar_3_3, grammar_3_4, grammar_3_5,
+} from "./grammar-blocks"
+
 export const topics = [
   // ══════════════════════════════════════════════════════
   // ТЕМА 1 — Introduksjon (Знайомство)
@@ -22,7 +28,7 @@ export const topics = [
         titleUa: "Привіт! Мене звати…",
         grammarFocus: ["present tense", "verb 'å hete'", "verb 'å være'", "question words: hva, hvor, hvem"],
         text: `Hei! Jeg heter Daria. Jeg er fra Ukraina. Jeg bor i Bergen nå. Jeg er tjuetre år gammel.
-
+        
 Jeg snakker ukrainsk og litt norsk. Norsk er vanskelig, men det er gøy å lære. Jeg går på norskkurs tre ganger i uken.
 
 – Hei! Hva heter du?
@@ -40,6 +46,7 @@ Marta og Daria er nye venner. De snakker norsk sammen. Det er bra!`,
           { word: "vanskelig"},
           { word: "i like måte"},
         ],
+        grammar: grammar_1_1,
         questions: [
           { q: "Hva heter den nye studenten?", a: "Hun heter Daria." },
           { q: "Hvor kommer Daria fra?", a: "Hun kommer fra Ukraina." },
@@ -82,6 +89,7 @@ Marta og Daria er nye venner. De snakker norsk sammen. Det er bra!`,
           { word: "morsom" },
           { word: "ingen" },
         ],
+        grammar: grammar_1_2,
         questions: [
           { q: "Hva heter moren til Taras?", a: "Hun heter Olena." },
           { q: "Hva jobber faren til Taras som?", a: "Han er ingeniør." },
@@ -127,6 +135,7 @@ Hva liker du å gjøre? Liker du musikk? Liker du sport? Det er viktig å ha hob
           { word: "viktig" },
           { word: "morsomt" },
         ],
+        grammar: grammar_1_3,
         questions: [
           { q: "Hva liker Sofia å gjøre om kvelden?", a: "Hun liker å lese bøker." },
           { q: "Hvor mange ganger i uken spiller Sofia gitar?", a: "To ganger i uken." },
@@ -176,6 +185,7 @@ Andrii og Fatima er nye venner. De drikker kaffe og snakker mye.`,
           { word: "gjerne" },
           { word: "hvor lenge" },
         ],
+        grammar: grammar_1_4,
         questions: [
           { q: "Hvor er Andrii og Fatima?", a: "De er på norskkurs." },
           { q: "Hvor kommer Fatima fra?", a: "Hun kommer fra Somalia." },
@@ -218,6 +228,7 @@ Etter kurset drikker vi kaffe og prater. Vi hjelper hverandre med leksene. Norsk
           { word: "tydelig" },
           { word: "en uttale" },
         ],
+        grammar: grammar_1_5,
         questions: [
           { q: "Når starter norskkurset?", a: "Det starter klokka ni." },
           { q: "Hvor mange studenter er det i klassen?", a: "Det er femten studenter." },
@@ -281,6 +292,7 @@ Om kvelden ser jeg på TV eller leser en bok. Klokka elleve legger jeg meg. God 
           { word: "om ettermiddagen" },
           { word: "vanlig" },
         ],
+        grammar: grammar_2_1,
         questions: [
           { q: "Når står Lena opp?", a: "Hun står opp klokka sju." },
           { q: "Hva spiser hun til frokost?", a: "Hun spiser brød med ost og drikker kaffe." },
@@ -332,6 +344,7 @@ Klokka syv er jeg klar. Jeg tar sekken og går ut.`,
           { word: "så" },
           { word: "etter det" },
         ],
+        grammar: grammar_2_2,
         questions: [
           { q: "Når ringer vekkerklokka?", a: "Den ringer klokka seks og halvt." },
           { q: "Hva gjør han/hun etter at han/hun våkner?", a: "Han/hun går på badet og pusser tennene." },
@@ -380,6 +393,7 @@ Etter middag vasker jeg opp. Så ser jeg litt på TV eller scroller på telefone
           { word: "enkel" },
           { word: "en ny dag" },
         ],
+        grammar: grammar_2_3,
         questions: [
           { q: "Når slutter jobben?", a: "Den slutter klokka fire." },
           { q: "Hva gjør han/hun på bussen hjem?", a: "Han/hun hører på musikk." },
@@ -430,6 +444,7 @@ Hjemme lager jeg en rask middag. Klokka ni er jeg endelig ferdig. Jeg er veldig 
           { word: "endelig" },
           { word: "ferdig" },
         ],
+        grammar: grammar_2_4,
         questions: [
           { q: "Når må han/hun møte opp på kontoret?", a: "Klokka åtte." },
           { q: "Hvorfor kjøper han/hun en bolle på bakeriet?", a: "Han/hun rekker ikke spise frokost hjemme." },
@@ -478,6 +493,7 @@ Om kvelden bestiller vi pizza. Vi ser på en film på Netflix. Det er den beste 
           { word: "å bestille" },
           { word: "etterpå" },
         ],
+        grammar: grammar_2_5,
         questions: [
           { q: "Når står han/hun opp i helgen?", a: "Han/hun står opp klokka ni." },
           { q: "Hva gjør han/hun om formiddagen?", a: "Han/hun vasker klær og rydder leiligheten." },
@@ -545,6 +561,7 @@ Jeg putter varene i sekken og går hjem. Nå er kjøleskapet fullt!`,
           { word: "tom" },
           { word: "en pris" },
         ],
+        grammar: grammar_3_1,
         questions: [
           { q: "Hvorfor går han/hun til butikken?", a: "Fordi kjøleskapet er tomt." },
           { q: "Hva heter butikken?", a: "Det er en Rema 1000." },
@@ -593,6 +610,7 @@ Til slutt lager jeg en enkel brun saus. Maten er klar! Jeg setter meg ved bordet
           { word: "å lukte" },
           { word: "stolt" },
         ],
+        grammar: grammar_3_2,
         questions: [
           { q: "Hva lager han/hun til middag?", a: "Han/hun lager kjøttkaker med poteter og saus." },
           { q: "Hva blander han/hun i bollen?", a: "Kjøttdeig, egg, løk og mel." },
@@ -641,6 +659,7 @@ Jeg spiser frokost mens jeg hører på radio. Det er en god start på dagen!`,
           { word: "å holde mett" },
           { word: "mens" },
         ],
+        grammar: grammar_3_3,
         questions: [
           { q: "Hva slags brød spiser han/hun?", a: "Grovbrød." },
           { q: "Hva foretrekker han/hun å drikke om morgenen?", a: "Han/hun foretrekker te." },
@@ -698,6 +717,7 @@ Vi betaler og går ut. Det var en fin lørdag!`,
           { word: "et vindusbord" },
           { word: "varm" },
         ],
+        grammar: grammar_3_4,
         questions: [
           { q: "Hvor møtes de to venninnene?", a: "På en kafé som heter Kaffebrenneriet." },
           { q: "Hva bestiller den første jenta?", a: "En cappuccino og et stykke sjokoladekake." },
@@ -754,6 +774,7 @@ Jeg finner alt på listen. Prisen er bra – jeg bruker ikke for mye penger. God
           { word: "god handel" },
           { word: "å sjekke" },
         ],
+        grammar: grammar_3_5,
         questions: [
           { q: "Hvorfor lager han/hun en handleliste?", a: "For ikke å glemme noe." },
           { q: "Hva trenger han/hun ikke kjøpe?", a: "Egg og løk – det har han/hun allerede." },

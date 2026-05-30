@@ -15,7 +15,7 @@ function Header({ onMenuClick }) {
   const debounceTimer = useRef(null)
   useEffect(() => {
     if (!user) { setProfile(null); return }
-      supabase
+    supabase
       .from("profiles")
       .select("name, streak")
       .eq("id", user.id)
@@ -68,7 +68,12 @@ function Header({ onMenuClick }) {
         className="flex items-center gap-2 shrink-0 hover:opacity-80 transition-opacity"
       >
         <div className="w-7 h-7 bg-teal-700 rounded-lg flex items-center justify-center">
-          <span className="text-white text-sm font-bold leading-none">✦</span>
+          <svg width="15" height="15" viewBox="0 0 14 14" fill="none">
+            <path
+              d="M7 0 L8.2 5.8 L14 7 L8.2 8.2 L7 14 L5.8 8.2 L0 7 L5.8 5.8 Z"
+              fill="white"
+            />
+          </svg>
         </div>
         <span className="text-gray-900 font-semibold text-sm tracking-tight">LinguAI</span>
       </button>
@@ -109,7 +114,7 @@ function Header({ onMenuClick }) {
                     className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 flex items-center justify-between"
                   >
                     <span className="text-gray-900 text-sm font-medium">{w.word_no}</span>
-                      <span className="text-gray-400 text-xs">{w.word_ua}</span>
+                    <span className="text-gray-400 text-xs">{w.word_ua}</span>
                   </div>
                 ))}
               </div>
