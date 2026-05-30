@@ -19,7 +19,9 @@ export default function TopicPage() {
   const subtopic = topic?.subtopics.find(s => s.id === subtopicId)
   const [grammarAnswers, setGrammarAnswers] = useState({})
   const [grammarChecked, setGrammarChecked] = useState(false)
-  const [stage, setStage] = useState(STAGES.READ)
+  const progressKey = `linguai_progress_${topicId}_${subtopicId}`
+  const saved = JSON.parse(localStorage.getItem(progressKey) || "{}")
+  const [stage, setStage] = useState(saved.stage || STAGES.READ)
   const [showResults, setShowResults] = useState(false)
   const [flipping, setFlipping] = useState(false)
   const [quizIndex, setQuizIndex] = useState(0)
@@ -27,6 +29,10 @@ export default function TopicPage() {
   const [speaking, setSpeaking] = useState(false)
   const [aiFeedback, setAiFeedback] = useState({})
   const [aiFeedbackLoading, setAiFeedbackLoading] = useState({})
+
+  useEffect(() => {
+  localStorage.setItem(progressKey, JSON.stringify({ stage, quizIndex, grammarAnswers }))
+  }, [stage, quizIndex, grammarAnswers])  
 
   async function checkWithAI(idx, exercise) {
     const userAnswer = answers[idx]?.trim()
@@ -86,6 +92,7 @@ export default function TopicPage() {
   }
 
   function nextSubtopic() {
+    localStorage.removeItem(progressKey)
     const idx = topic.subtopics.findIndex(s => s.id === subtopicId)
     if (idx < topic.subtopics.length - 1) {
       const next = topic.subtopics[idx + 1]
