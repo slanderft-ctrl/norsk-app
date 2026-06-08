@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { topics } from "../data/topics"
 import WordPopover from "../components/WordPopover"
@@ -17,10 +17,10 @@ export default function TopicPage() {
 
   const topic = topics.find(t => t.id === Number(topicId))
   const subtopic = topic?.subtopics.find(s => s.id === subtopicId)
-  const [grammarAnswers, setGrammarAnswers] = useState({})
-  const [grammarChecked, setGrammarChecked] = useState(false)
   const progressKey = `linguai_progress_${topicId}_${subtopicId}`
   const saved = JSON.parse(localStorage.getItem(progressKey) || "{}")
+  const [grammarAnswers, setGrammarAnswers] = useState(saved.grammarAnswers || {})
+  const [grammarChecked, setGrammarChecked] = useState(Boolean(saved.grammarChecked))
   const [stage, setStage] = useState(saved.stage || STAGES.READ)
   const [showResults, setShowResults] = useState(false)
   const [flipping, setFlipping] = useState(false)
@@ -31,8 +31,8 @@ export default function TopicPage() {
   const [aiFeedbackLoading, setAiFeedbackLoading] = useState({})
 
   useEffect(() => {
-  localStorage.setItem(progressKey, JSON.stringify({ stage, quizIndex, grammarAnswers }))
-  }, [stage, quizIndex, grammarAnswers])  
+    localStorage.setItem(progressKey, JSON.stringify({ stage, quizIndex, grammarAnswers, grammarChecked }))
+  }, [progressKey, stage, quizIndex, grammarAnswers, grammarChecked])
 
   async function checkWithAI(idx, exercise) {
     const userAnswer = answers[idx]?.trim()
@@ -91,6 +91,18 @@ export default function TopicPage() {
     setTimeout(() => { setStage(nextStage); setFlipping(false) }, 300)
   }
 
+  function canOpenStage(nextStage) {
+    if (nextStage === STAGES.READ) return true
+    if (nextStage === STAGES.GRAMMAR) return Boolean(subtopic.grammar)
+    if (nextStage === STAGES.QUIZ) return !subtopic.grammar || grammarChecked
+    return false
+  }
+
+  function selectStage(nextStage) {
+    if (!canOpenStage(nextStage) || stage === nextStage) return
+    goTo(nextStage)
+  }
+
   function nextSubtopic() {
     localStorage.removeItem(progressKey)
     const idx = topic.subtopics.findIndex(s => s.id === subtopicId)
@@ -123,10 +135,13 @@ export default function TopicPage() {
   const getCorrect = ex =>
     ex.type === "question" ? ex.a : ex.type === "fill" ? ex.answer : ex.no
 
-  const isCorrect = (ex, idx) =>
-    (answers[idx] || "").trim().toLowerCase() === getCorrect(ex).trim().toLowerCase()
-
-  const correctCount = allExercises.filter((ex, i) => isCorrect(ex, i)).length
+  function checkAllWithAI() {
+    allExercises.forEach((ex, idx) => {
+      if (answers[idx]?.trim() && !aiFeedback[idx] && !aiFeedbackLoading[idx]) {
+        checkWithAI(idx, ex)
+      }
+    })
+  }
 
   // ── RENDER ─────────────────────────────────────────────
   return (
@@ -160,18 +175,26 @@ export default function TopicPage() {
               { key: STAGES.READ, icon: "📖", label: "Читання" },
               { key: STAGES.GRAMMAR, icon: "📐", label: "Граматика" },
               { key: STAGES.QUIZ, icon: "✏️", label: "Вправи" },
-            ].map(s => (
-              <div
-                key={s.key}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all"
-                style={stage === s.key
-                  ? { background: "#E1F5EE", color: "#0F6E56", border: "0.5px solid #9FE1CB" }
-                  : { background: "#fff", color: "#9CA3AF", border: "0.5px solid #E5E7EB" }
-                }
-              >
-                <span>{s.icon}</span> {s.label}
-              </div>
-            ))}
+            ].map(s => {
+              const enabled = canOpenStage(s.key)
+              return (
+                <button
+                  key={s.key}
+                  type="button"
+                  onClick={() => selectStage(s.key)}
+                  disabled={!enabled}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all disabled:cursor-not-allowed"
+                  style={stage === s.key
+                    ? { background: "#E1F5EE", color: "#0F6E56", border: "0.5px solid #9FE1CB" }
+                    : enabled
+                    ? { background: "#fff", color: "#6B7280", border: "0.5px solid #E5E7EB" }
+                    : { background: "#F3F4F6", color: "#CBD5E1", border: "0.5px solid #E5E7EB" }
+                  }
+                >
+                  <span>{s.icon}</span> {s.label}
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -428,12 +451,13 @@ export default function TopicPage() {
                   </button>
                   <button
                     onClick={() => goTo(STAGES.QUIZ)}
-                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium text-white transition-colors"
-                    style={{ background: "#0F6E56" }}
+                    disabled={!grammarChecked}
+                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium text-white transition-colors disabled:cursor-not-allowed"
+                    style={{ background: grammarChecked ? "#0F6E56" : "#CBD5E1" }}
                     onMouseEnter={e => e.target.style.background = "#0D5E48"}
-                    onMouseLeave={e => e.target.style.background = "#0F6E56"}
+                    onMouseLeave={e => e.target.style.background = grammarChecked ? "#0F6E56" : "#CBD5E1"}
                   >
-                    ✏️ До вправ →
+                    {grammarChecked ? "✏️ До вправ →" : "Перевір граматику"}
                   </button>
                 </div>
               </div>
@@ -445,35 +469,27 @@ export default function TopicPage() {
 
             // ── RESULTS ──────────────────────────────────────
             if (showResults) {
-              const pct = Math.round((correctCount / total) * 100)
-              const emoji = pct === 100 ? "🏆" : pct >= 70 ? "👍" : "💪"
               return (
                 <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
                   {/* Results header */}
                   <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-                    <span className="text-xl">{emoji}</span>
+                    <span className="text-xl">✦</span>
                     <div>
                       <p className="text-gray-900 font-semibold text-sm">Результати вправ</p>
-                      <p className="text-xs text-gray-400">{correctCount} з {total} правильно · {pct}%</p>
+                      <p className="text-xs text-gray-400">Перегляд відповідей без автоматичного балу</p>
                     </div>
-                    {/* Score bar */}
-                    <div className="flex-1 ml-2">
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-2 rounded-full transition-all duration-700"
-                          style={{
-                            width: `${pct}%`,
-                            background: pct === 100 ? "#0F6E56" : pct >= 70 ? "#22C55E" : "#F59E0B"
-                          }}
-                        />
-                      </div>
-                    </div>
+                    <button
+                      onClick={checkAllWithAI}
+                      className="ml-auto text-xs font-medium px-3 py-1.5 rounded-lg border transition-all"
+                      style={{ color: "#6B3FA0", borderColor: "#CDB8F0", background: "#F0EAFC" }}
+                    >
+                      AI перевірка всіх
+                    </button>
                   </div>
 
                   {/* Results list */}
                   <div className="p-5 flex flex-col gap-3">
                     {allExercises.map((ex, idx) => {
-                      const correct = isCorrect(ex, idx)
                       const userAns = answers[idx] || "—"
                       const cfg = TYPE_CONFIG[ex.type]
                       return (
@@ -481,8 +497,8 @@ export default function TopicPage() {
                           key={idx}
                           className="rounded-xl border p-4"
                           style={{
-                            borderColor: correct ? "#BBF7D0" : "#FECACA",
-                            background: correct ? "#F0FFF4" : "#FFF5F5",
+                            borderColor: "#E5E7EB",
+                            background: "#fff",
                           }}
                         >
                           {/* Type badge + question */}
@@ -492,9 +508,6 @@ export default function TopicPage() {
                               style={{ background: cfg.bg, color: cfg.accent }}
                             >
                               {cfg.icon} {cfg.label}
-                            </span>
-                            <span className={`text-sm font-bold ml-auto ${correct ? "text-green-500" : "text-red-400"}`}>
-                              {correct ? "✓" : "✗"}
                             </span>
                           </div>
 
@@ -509,21 +522,19 @@ export default function TopicPage() {
                               <span className="text-gray-400 text-xs shrink-0">Твоя відповідь:</span>
                               <span
                                 className="font-medium"
-                                style={{ color: correct ? "#0F6E56" : "#DC2626" }}
+                                style={{ color: "#374151" }}
                               >{userAns}</span>
                             </div>
-                            {!correct && (
-                              <div className="flex gap-2 text-sm items-baseline">
-                                <span className="text-gray-400 text-xs shrink-0">Правильно:</span>
-                                <span className="text-green-600 font-medium">{getCorrect(ex)}</span>
-                              </div>
-                            )}
+                            <div className="flex gap-2 text-sm items-baseline">
+                              <span className="text-gray-400 text-xs shrink-0">Варіант відповіді:</span>
+                              <span className="font-medium" style={{ color: "#0F6E56" }}>{getCorrect(ex)}</span>
+                            </div>
                           </div>
 
                           {/* AI feedback */}
                           {aiFeedback[idx] ? (
                             <div className="mt-3 rounded-lg px-3 py-2.5" style={{ background: "#F0EAFC" }}>
-                              <p className="text-xs font-medium mb-1" style={{ color: "#6B3FA0" }}>✦ AI пояснення</p>
+                              <p className="text-xs font-medium mb-1" style={{ color: "#6B3FA0" }}>✦ AI перевірка</p>
                               <p className="text-gray-700 text-sm leading-relaxed">{aiFeedback[idx]}</p>
                             </div>
                           ) : aiFeedbackLoading[idx] ? (
@@ -537,7 +548,7 @@ export default function TopicPage() {
                               className="mt-3 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all"
                               style={{ color: "#6B3FA0", borderColor: "#CDB8F0", background: "#F0EAFC" }}
                             >
-                              ✦ Чому?
+                              ✦ Перевірити з AI
                             </button>
                           )}
                         </div>
@@ -547,7 +558,13 @@ export default function TopicPage() {
 
                   <div className="px-5 py-4 border-t border-gray-100 flex justify-between items-center">
                     <button
-                      onClick={() => { setShowResults(false); setQuizIndex(0); setAnswers({}) }}
+                      onClick={() => {
+                        setShowResults(false)
+                        setQuizIndex(0)
+                        setAnswers({})
+                        setAiFeedback({})
+                        setAiFeedbackLoading({})
+                      }}
                       className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       ← Спробувати ще раз
@@ -700,7 +717,10 @@ export default function TopicPage() {
                         </button>
                       ) : (
                         <button
-                          onClick={() => setShowResults(true)}
+                          onClick={() => {
+                            setShowResults(true)
+                            checkAllWithAI()
+                          }}
                           className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium text-white transition-colors"
                           style={{ background: "#0F6E56" }}
                           onMouseEnter={e => e.target.style.background = "#0D5E48"}
