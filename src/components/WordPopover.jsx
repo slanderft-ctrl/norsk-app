@@ -65,7 +65,9 @@ export default function WordPopover({ text }) {
       try {
         const m = raw.match(/\{[\s\S]*\}/)
         if (m) { const p = JSON.parse(m[0]); expl = p.explanation || raw; sugg = p.suggestions || [] }
-      } catch {}
+      } catch {
+        // Fall back to the raw model response when it is not valid JSON.
+      }
       setExplanation(expl); setSuggestions(sugg)
       setHistory([
         { role: "user", content: `Що означає «${activeWord}»?` },
@@ -97,7 +99,11 @@ export default function WordPopover({ text }) {
     }
   }
 
-  const PW = chatMode ? 320 : phase === "answered" ? 280 : 120
+  const popoverWidth = chatMode
+    ? "min(320px, calc(100vw - 32px))"
+    : phase === "answered"
+    ? "min(360px, calc(100vw - 32px))"
+    : "max-content"
 
   return (
     <div style={{
@@ -140,7 +146,9 @@ export default function WordPopover({ text }) {
                   bottom: "calc(100% + 8px)",
                   left: "50%",
                   transform: "translateX(-50%)",
-                  width: `${PW}px`,
+                  width: popoverWidth,
+                  minWidth: phase === "idle" ? "120px" : "auto",
+                  maxWidth: "calc(100vw - 32px)",
                   background: "#ffffff",
                   border: "0.5px solid #E5E7EB",
                   borderRadius: "14px",
@@ -148,7 +156,7 @@ export default function WordPopover({ text }) {
                   boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
                   display: "inline-block",
                   verticalAlign: "bottom",
-                  whiteSpace: "normal",
+                  whiteSpace: phase === "idle" || phase === "loading" ? "nowrap" : "normal",
                   transition: "width .15s ease",
                 }}
               >
@@ -158,6 +166,7 @@ export default function WordPopover({ text }) {
                     width: "100%", display: "flex", alignItems: "center", gap: "7px",
                     background: "transparent", border: "none", padding: "10px 13px",
                     cursor: "pointer", fontFamily: "inherit", borderRadius: "14px",
+                    whiteSpace: "nowrap",
                   }}>
                     <span style={{ fontSize: "13px", color: "#0F6E56" }}>✦</span>
                     <span style={{ fontSize: "13px", fontWeight: 600, color: "#0F6E56" }}>Що це?</span>
