@@ -4,7 +4,6 @@ import questionsRaw from "../data/questions.json"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../context/AuthContext"
 
-// ── CEFR mapping ────────────────────────────────────────
 const LEVELS = [
   { min: 0,   max: 1.5, label: "A1", color: "#22C55E", bg: "#F0FFF4", desc: "Початківець" },
   { min: 1.5, max: 2.5, label: "A2", color: "#84CC16", bg: "#F7FEE7", desc: "Елементарний" },
@@ -25,9 +24,6 @@ function getCEFR(theta) {
   return LEVELS.find(l => theta >= l.min && theta < l.max) || LEVELS[LEVELS.length - 1]
 }
 
-// ── Adaptive algorithm ──────────────────────────────────
-// theta: ability estimate (1=A1 … 5=C1), starts at 3 (B1)
-// Next question: closest difficulty to theta, not yet answered
 function selectNext(theta, answered) {
   const remaining = questionsRaw.filter(q => !answered.has(q.id))
   if (!remaining.length) return null
@@ -42,7 +38,6 @@ function updateTheta(theta, correct, questionLevel) {
   return Math.max(1, Math.min(5, theta + delta))
 }
 
-// ── AI Check ────────────────────────────────────────────
 async function aiCheckAnswer(question, userAnswer, correctAnswer, acceptedAnswers) {
   try {
     const res = await fetch("/api/Chat", {
@@ -76,7 +71,6 @@ async function aiCheckAnswer(question, userAnswer, correctAnswer, acceptedAnswer
   return { score: 0, comment: "" }
 }
 
-// ── Components ───────────────────────────────────────────
 
 function ProgressBar({ current, total, theta }) {
   const pct = (current / total) * 100
@@ -110,13 +104,12 @@ function CategoryBadge({ category }) {
   )
 }
 
-// ── Main component ───────────────────────────────────────
 const TOTAL_QUESTIONS = 15
 
 export default function LevelTest() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const [phase, setPhase] = useState("intro") // intro | test | checking | results
+  const [phase, setPhase] = useState("intro")
   const [theta, setTheta] = useState(3)
   const [answered, setAnswered] = useState(new Set())
   const [current, setCurrent] = useState(null)
@@ -176,7 +169,6 @@ export default function LevelTest() {
     setResults(newResults)
 
     if (newResults.length >= TOTAL_QUESTIONS || newAnswered.size >= questionsRaw.length) {
-  // Зберегти результат в Supabase
   if (user) {
     const finalCefr = getCEFR(newTheta)
     const correctCount = newResults.filter(r => r.correct).length
@@ -189,7 +181,6 @@ export default function LevelTest() {
       total: newResults.length,
     })
 
-    // Оновити target_level в профілі якщо ще не встановлений
     await supabase
       .from("profiles")
       .update({ target_level: finalCefr.label })
@@ -214,7 +205,6 @@ export default function LevelTest() {
   const finalLevel = getCEFR(theta)
   const rec = TOPIC_RECOMMENDATIONS[finalLevel.label] || TOPIC_RECOMMENDATIONS["A2"]
 
-  // ── INTRO ──────────────────────────────────────────────
   if (phase === "intro") return (
     <main style={{ flex: 1, background: "#F8F7F4", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
       <div style={{ maxWidth: "520px", width: "100%", background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "20px", padding: "36px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
@@ -250,7 +240,6 @@ export default function LevelTest() {
     </main>
   )
 
-  // ── RESULTS ────────────────────────────────────────────
   if (phase === "results") {
     const correct = results.filter(r => r.correct).length
     const pct = Math.round((correct / results.length) * 100)
@@ -259,7 +248,6 @@ export default function LevelTest() {
       <main style={{ flex: 1, background: "#F8F7F4", minHeight: "100vh", padding: "32px 24px" }}>
         <div style={{ maxWidth: "560px", margin: "0 auto" }}>
 
-          {/* Level card */}
           <div style={{ background: "#fff", border: `1.5px solid ${finalLevel.color}`, borderRadius: "20px", padding: "32px", textAlign: "center", marginBottom: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
             <p style={{ fontSize: "12px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: "12px", fontWeight: 600 }}>
               Орієнтовний рівень
@@ -271,7 +259,6 @@ export default function LevelTest() {
             <p style={{ fontSize: "13px", color: "#9CA3AF" }}>{correct} з {results.length} правильно · {pct}%</p>
           </div>
 
-          {/* Recommendation */}
           <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", padding: "20px 24px", marginBottom: "16px" }}>
             <p style={{ fontSize: "12px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: ".08em", fontWeight: 600, marginBottom: "12px" }}>
               З чого почати навчання
@@ -290,7 +277,6 @@ export default function LevelTest() {
             </div>
           </div>
 
-          {/* Answers breakdown */}
           <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", overflow: "hidden" }}>
             <div style={{ padding: "14px 20px", borderBottom: "0.5px solid #F3F4F6" }}>
               <p style={{ fontSize: "13px", fontWeight: 600, color: "#374151", margin: 0 }}>Розбивка відповідей</p>
@@ -343,7 +329,6 @@ export default function LevelTest() {
     )
   }
 
-  // ── TEST / CHECKING ────────────────────────────────────
   if (!current) return null
   const isChecking = phase === "checking"
   const lastResult = results[results.length - 1]
@@ -356,7 +341,6 @@ export default function LevelTest() {
 
         <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "20px", overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
 
-          {/* Question header */}
           <div style={{ padding: "16px 20px", borderBottom: "0.5px solid #F3F4F6", display: "flex", alignItems: "center", gap: "8px" }}>
             <CategoryBadge category={current.category} />
             <span style={{ fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: "20px", background: "#F3F4F6", color: "#6B7280", marginLeft: "auto" }}>
@@ -369,7 +353,6 @@ export default function LevelTest() {
               {current.question}
             </p>
 
-            {/* CHOICE */}
             {current.type === "choice" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "24px" }}>
                 {current.options.map((opt, i) => {
@@ -394,7 +377,6 @@ export default function LevelTest() {
               </div>
             )}
 
-            {/* FILL */}
             {current.type === "fill" && (
               <div style={{ marginBottom: "24px" }}>
                 <input
@@ -417,7 +399,6 @@ export default function LevelTest() {
                   }}
                 />
 
-                {/* AI loading */}
                 {aiLoading && (
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px" }}>
                     <span style={{ color: "#0F6E56", fontSize: "13px" }}>✦</span>
@@ -425,14 +406,12 @@ export default function LevelTest() {
                   </div>
                 )}
 
-                {/* AI comment */}
                 {isChecking && aiComment && !aiLoading && (
                   <div style={{ marginTop: "8px", padding: "8px 12px", background: "#F0EAFC", borderRadius: "10px", fontSize: "12px", color: "#6B3FA0" }}>
                     ✦ {aiComment}
                   </div>
                 )}
 
-                {/* Correct answer shown */}
                 {isChecking && !lastResult?.correct && !aiLoading && (
                   <div style={{ marginTop: "8px", fontSize: "13px", color: "#0F6E56" }}>
                     Правильно: <strong>{current.answer}</strong>
@@ -441,7 +420,6 @@ export default function LevelTest() {
               </div>
             )}
 
-            {/* Feedback banner */}
             {isChecking && !aiLoading && (
               <div style={{ marginBottom: "20px", padding: "10px 14px", borderRadius: "10px", display: "flex", alignItems: "center", gap: "8px", background: lastResult?.correct ? "#E1F5EE" : "#FFF5F5", border: `0.5px solid ${lastResult?.correct ? "#9FE1CB" : "#FECACA"}` }}>
                 <span style={{ fontSize: "16px" }}>{lastResult?.score === 1 ? "✓" : lastResult?.score === 0.5 ? "½" : "✗"}</span>
@@ -452,7 +430,6 @@ export default function LevelTest() {
             )}
           </div>
 
-          {/* Footer */}
           <div style={{ padding: "16px 24px", borderTop: "0.5px solid #F3F4F6", display: "flex", justifyContent: "flex-end" }}>
             {!isChecking ? (
               <button

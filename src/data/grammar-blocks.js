@@ -35,7 +35,6 @@ export const grammar_1_1 = {
   },
 }
 
-// 1.2 — Familien min
 export const grammar_1_2 = {
   topic: "Присвійні займенники (min / mi / mitt / mine)",
   blocks: [
@@ -72,7 +71,6 @@ export const grammar_1_2 = {
   },
 }
 
-// 1.3 — Mine hobbyer
 export const grammar_1_3 = {
   topic: "Конструкція «å like + інфінітив»",
   blocks: [
@@ -109,7 +107,6 @@ export const grammar_1_3 = {
   },
 }
 
-// 1.4 — En ny venn
 export const grammar_1_4 = {
   topic: "Питальні слова і будова запитань",
   blocks: [
@@ -146,7 +143,6 @@ export const grammar_1_4 = {
   },
 }
 
-// 1.5 — På norskkurs
 export const grammar_1_5 = {
   topic: "Час доби, числа і дієслова руху/дії",
   blocks: [
@@ -183,11 +179,7 @@ export const grammar_1_5 = {
   },
 }
 
-// ════════════════════════════════════════════════════════
-// ТЕМА 2 — Hverdagen
-// ════════════════════════════════════════════════════════
 
-// 2.1 — En vanlig dag
 export const grammar_2_1 = {
   topic: "Послідовність дій і час доби",
   blocks: [
@@ -224,7 +216,6 @@ export const grammar_2_1 = {
   },
 }
 
-// 2.2 — Morgenrutine
 export const grammar_2_2 = {
   topic: "Слова-послідовності та зворотні дієслова",
   blocks: [
@@ -261,7 +252,6 @@ export const grammar_2_2 = {
   },
 }
 
-// 2.3 — Etter jobb
 export const grammar_2_3 = {
   topic: "Дієслово «å trenge» і неозначені слова",
   blocks: [
@@ -298,7 +288,6 @@ export const grammar_2_3 = {
   },
 }
 
-// 2.4 — En travel dag
 export const grammar_2_4 = {
   topic: "Модальне дієслово «å måtte» (мусити)",
   blocks: [
@@ -335,7 +324,6 @@ export const grammar_2_4 = {
   },
 }
 
-// 2.5 — Helg hjemme
 export const grammar_2_5 = {
   topic: "Конструкція «å ha lyst til» і протиставлення «men»",
   blocks: [
@@ -372,11 +360,7 @@ export const grammar_2_5 = {
   },
 }
 
-// ════════════════════════════════════════════════════════
-// ТЕМА 3 — Mat og butikk
-// ════════════════════════════════════════════════════════
 
-// 3.1 — På butikken
 export const grammar_3_1 = {
   topic: "Дієслово «å koste», числа і ціни",
   blocks: [
@@ -413,7 +397,6 @@ export const grammar_3_1 = {
   },
 }
 
-// 3.2 — Jeg lager middag
 export const grammar_3_2 = {
   topic: "Дієслова приготування і послідовність кроків",
   blocks: [
@@ -450,7 +433,6 @@ export const grammar_3_2 = {
   },
 }
 
-// 3.3 — Frokost hjemme
 export const grammar_3_3 = {
   topic: "Дієслово «å foretrekke» і прислівники частоти",
   blocks: [
@@ -487,7 +469,6 @@ export const grammar_3_3 = {
   },
 }
 
-// 3.4 — På kafé
 export const grammar_3_4 = {
   topic: "Ввічливе замовлення: «jeg vil gjerne ha»",
   blocks: [
@@ -524,7 +505,6 @@ export const grammar_3_4 = {
   },
 }
 
-// 3.5 — Handleliste
 export const grammar_3_5 = {
   topic: "Одиниці кількості й конструкція «å trenge»",
   blocks: [

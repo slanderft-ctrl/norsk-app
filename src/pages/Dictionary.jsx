@@ -23,7 +23,6 @@ function speak(text) {
   speechSynthesis.speak(utt)
 }
 
-// ── WordCard — без змін ─────────────────────────────────
 function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) {
   const [noteValue, setNoteValue] = useState(word.note || "")
   const [saved, setSaved] = useState(false)
@@ -126,7 +125,6 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
   )
 }
 
-// ── Dictionary ──────────────────────────────────────────
 export default function Dictionary() {
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -135,7 +133,6 @@ export default function Dictionary() {
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
 
-  // Завантажити слова з Supabase
   useEffect(() => {
     if (!user) { setLoading(false); return }
     supabase
@@ -182,7 +179,6 @@ export default function Dictionary() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 260px", gap: "20px", alignItems: "start" }}>
 
           <div>
-            {/* Search */}
             <div style={{ marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "12px", padding: "9px 14px" }}>
               <span style={{ fontSize: "14px", color: "#9CA3AF" }}>🔍</span>
               <input
@@ -196,7 +192,6 @@ export default function Dictionary() {
               )}
             </div>
 
-            {/* States */}
             {loading ? (
               <div style={{ textAlign: "center", padding: "48px", color: "#9CA3AF", fontSize: "14px" }}>Завантаження...</div>
             ) : !user ? (
@@ -234,7 +229,6 @@ export default function Dictionary() {
             )}
           </div>
 
-          {/* RIGHT — topics sidebar — без змін */}
           <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", overflow: "hidden", position: "sticky", top: "24px" }}>
             <div style={{ padding: "12px 16px", borderBottom: "0.5px solid #F3F4F6", display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{ fontSize: "15px" }}>📚</span>

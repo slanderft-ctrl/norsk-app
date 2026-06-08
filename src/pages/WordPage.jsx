@@ -173,7 +173,6 @@ export default function WordPage() {
       <style>{`@keyframes wpSpin{to{transform:rotate(360deg)}}`}</style>
       <div style={{ maxWidth:"1100px", margin:"0 auto" }}>
 
-        {/* Back */}
         <button onClick={() => navigate(-1)} style={{
           background:"transparent", border:"none", cursor:"pointer",
           color:"#9CA3AF", fontSize:"13px", display:"flex", alignItems:"center", gap:"5px",
@@ -184,16 +183,12 @@ export default function WordPage() {
 
         <div style={{ display:"grid", gridTemplateColumns:"1fr 320px", gap:"16px", alignItems:"start" }}>
 
-          {/* LEFT COLUMN */}
           <div style={{ display:"flex", flexDirection:"column", gap:"14px" }}>
 
-            {/* HERO CARD */}
             <div style={{ background:"#fff", border:"0.5px solid #E5E7EB", borderRadius:"20px", padding:"24px 24px 20px", boxShadow:"0 1px 4px rgba(0,0,0,0.04)" }}>
               <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:"16px" }}>
 
-                {/* Word info */}
                 <div style={{ flex:1 }}>
-                  {/* Article + word */}
                   {wordData.article && (
                     <p style={{ fontSize:"14px", color:"#9CA3AF", marginBottom:"4px", fontWeight:500 }}>
                       {wordData.article}
@@ -203,14 +198,12 @@ export default function WordPage() {
                     {wordData.word}
                   </h1>
 
-                  {/* Translation */}
                   {wordData.translation && (
                     <p style={{ fontSize:"20px", color:"#0F6E56", fontWeight:500, marginBottom:"14px" }}>
                       {wordData.translation}
                     </p>
                   )}
 
-                  {/* Tags */}
                   <div style={{ display:"flex", gap:"6px", flexWrap:"wrap" }}>
                     {wordData.pos && (
                       <span style={{ fontSize:"12px", fontWeight:500, padding:"3px 10px", borderRadius:"20px", background:"#F3F4F6", color:"#374151" }}>
@@ -225,9 +218,7 @@ export default function WordPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
                 <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"10px" }}>
-                  {/* Big speak button */}
                   <button
                     onClick={() => {
                       const utt = new SpeechSynthesisUtterance(wordData.word)
@@ -245,7 +236,6 @@ export default function WordPage() {
                     title="Озвучити слово"
                   >▶</button>
 
-                  {/* Add to dict */}
                  <button
                   onClick={addToDict}
                   style={{
@@ -262,7 +252,6 @@ export default function WordPage() {
               </div>
             </div>
 
-            {/* DEFINITION */}
             {wordData.explanations.length > 0 && (
               <Section icon="📖" title="Визначення (норвезькою)">
                 <div style={{ display:"flex", flexDirection:"column", gap:"8px" }}>
@@ -278,7 +267,6 @@ export default function WordPage() {
               </Section>
             )}
 
-            {/* EXAMPLES */}
             {wordData.examples.length > 0 && (
               <Section icon="💬" title="Приклади використання">
                 <div style={{ display:"flex", flexDirection:"column", gap:"10px" }}>
@@ -292,7 +280,6 @@ export default function WordPage() {
               </Section>
             )}
 
-            {/* INFLECTIONS */}
             {(wordData.inflections.length > 0 || wordData.perfPart) && (
               <Section icon="📐" title="Відмінювання / Форми">
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"8px" }}>
@@ -334,7 +321,6 @@ export default function WordPage() {
 
           </div>
 
-          {/* RIGHT COLUMN — AI */}
           <div style={{ position:"sticky", top:"24px" }}>
             <AiWidget context={{ word: wordData.word, partOfSpeech: wordData.pos }} />
           </div>

@@ -81,7 +81,6 @@ export default function WordPopover({ text }) {
         const m = raw.match(/\{[\s\S]*\}/)
         if (m) { const p = JSON.parse(m[0]); expl = p.explanation || raw; sugg = p.suggestions || [] }
       } catch {
-        // Fall back to the raw model response when it is not valid JSON.
       }
       setExplanation(expl); setSuggestions(sugg)
       setHistory([
@@ -177,7 +176,6 @@ export default function WordPopover({ text }) {
                   transition: "width .15s ease",
                 }}
               >
-                {/* IDLE */}
                 {phase === "idle" && (
                   <button onClick={askWord} style={{
                     width: "100%", display: "flex", alignItems: "center", gap: "7px",
@@ -191,7 +189,6 @@ export default function WordPopover({ text }) {
                   </button>
                 )}
 
-                {/* LOADING */}
                 {phase === "loading" && (
                   <div style={{ padding: "11px 13px", display: "flex", alignItems: "center", gap: "8px" }}>
                     <span style={{ fontSize: "13px", color: "#0F6E56" }}>✦</span>
@@ -205,7 +202,6 @@ export default function WordPopover({ text }) {
                   </div>
                 )}
 
-                {/* ANSWERED */}
                 {phase === "answered" && !chatMode && (
                   <div style={{ padding: "12px 13px" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
@@ -259,7 +255,6 @@ export default function WordPopover({ text }) {
                   </div>
                 )}
 
-                {/* CHAT MODE */}
                 {chatMode && (
                   <div style={{ display: "flex", flexDirection: "column", height: "340px" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 13px", borderBottom: "0.5px solid #F3F4F6" }}>

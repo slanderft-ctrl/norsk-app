@@ -6,7 +6,6 @@ const STAGES = { READ: "read", GRAMMAR: "grammar", QUIZ: "quiz" }
 function TopicCard() {
   const navigate = useNavigate()
 
-  // Яка тема/підтема активна
   const savedProgress = JSON.parse(localStorage.getItem("topicProgress") || "null")
   const topic = savedProgress
     ? (topics.find(t => t.id === savedProgress.topicId) || topics.find(t => t.status === "active") || topics[0])
@@ -16,7 +15,6 @@ function TopicCard() {
   const targetSubtopicId = savedProgress?.subtopicId || firstSubtopic?.id
   const hasProgress = !!savedProgress
 
-  // Читаємо поточний етап підтеми
   const progressKey = `linguai_progress_${topic?.id}_${targetSubtopicId}`
   const subtopicProgress = JSON.parse(localStorage.getItem(progressKey) || "{}")
   const currentStage = subtopicProgress.stage || STAGES.READ
@@ -28,7 +26,6 @@ function TopicCard() {
     ? Math.round((currentSubtopicIdx / topic.subtopics.length) * 100)
     : 0
 
-  // Динамічні кроки на основі поточного етапу
   const subtopic = topic?.subtopics?.[currentSubtopicIdx]
   const hasGrammar = !!subtopic?.grammar
 
@@ -40,7 +37,6 @@ function TopicCard() {
       done: currentStage === STAGES.GRAMMAR || currentStage === STAGES.QUIZ,
       active: currentStage === STAGES.READ,
     },
-    // Граматика — тільки якщо є поле grammar у підтемі
     ...(hasGrammar ? [{
       id: 2,
       icon: "📐",
@@ -63,7 +59,6 @@ function TopicCard() {
     }
   }
 
-  // Лейбл кнопки залежно від етапу
   const buttonLabel = {
     [STAGES.READ]: hasProgress ? "▶ Продовжити читання" : "▶ Почати тему",
     [STAGES.GRAMMAR]: "▶ Продовжити граматику",
@@ -73,7 +68,6 @@ function TopicCard() {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
 
-      {/* Top-bar прогрес */}
       <div className="h-1.5 bg-gray-100">
         <div
           className="h-1.5 bg-teal-500 rounded-r-full transition-all duration-500"
@@ -83,7 +77,6 @@ function TopicCard() {
 
       <div className="p-5">
 
-        {/* Заголовок */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-teal-50 border border-teal-100 rounded-xl flex items-center justify-center text-xl">
@@ -101,7 +94,6 @@ function TopicCard() {
           </span>
         </div>
 
-        {/* Прогрес-бар */}
         <div className="flex items-center gap-2 mb-5">
           <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
             <div
@@ -112,7 +104,6 @@ function TopicCard() {
           <span className="text-xs text-gray-400 shrink-0 w-8 text-right">{progressPercent}%</span>
         </div>
 
-        {/* Підтема */}
         <div className="bg-gray-50 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
           <span className="text-gray-400 text-xs">Підтема</span>
           <span className="text-gray-900 text-sm font-medium">
@@ -123,7 +114,6 @@ function TopicCard() {
           </span>
         </div>
 
-        {/* Кроки */}
         <div className="flex items-center gap-2 mb-5">
           {steps.map((step, i) => (
             <div key={step.id} className="flex items-center gap-2 flex-1">
@@ -146,7 +136,6 @@ function TopicCard() {
           ))}
         </div>
 
-        {/* Кнопка */}
         <button
           onClick={handleStart}
           className="w-full bg-teal-700 hover:bg-teal-600 text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm"

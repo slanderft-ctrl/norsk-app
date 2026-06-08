@@ -19,7 +19,6 @@ export default function AccountPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { navigate("/auth"); return }
 
-    // Паралельно вантажимо все
     const [profileRes, wordsRes, progressRes, testRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).single(),
       supabase.from("my_words").select("id, note").eq("user_id", user.id),
@@ -68,7 +67,6 @@ export default function AccountPage() {
           ← На головну
         </button>
 
-        {/* Profile header */}
         <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "20px", padding: "28px", marginBottom: "16px", display: "flex", alignItems: "center", gap: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
           <div style={{ width: "64px", height: "64px", borderRadius: "20px", background: "#0F6E56", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", fontWeight: 700, flexShrink: 0 }}>
             {initials}
@@ -81,7 +79,6 @@ export default function AccountPage() {
           </div>
         </div>
 
-        {/* Stats grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "16px" }}>
           {[
             { label: "Серія днів",   value: profile.streak ?? 0, icon: "🔥" },
@@ -97,7 +94,6 @@ export default function AccountPage() {
           ))}
         </div>
 
-        {/* Last test result */}
         {lastTest && (
           <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", padding: "20px 24px", marginBottom: "16px" }}>
             <p style={{ fontSize: "12px", fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: "12px" }}>
@@ -121,7 +117,6 @@ export default function AccountPage() {
           </div>
         )}
 
-        {/* Target level */}
         <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", padding: "20px 24px", marginBottom: "16px" }}>
           <p style={{ fontSize: "12px", fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: "12px" }}>
             Ціль навчання
@@ -140,7 +135,6 @@ export default function AccountPage() {
           <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "10px" }}>Цільовий рівень для norskprøve</p>
         </div>
 
-        {/* Quick actions */}
         <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "16px", overflow: "hidden", marginBottom: "16px" }}>
           {[
             { label: "Мій словник", icon: "📖", sub: `${stats.words} слів`, action: () => navigate("/dictionary") },
@@ -164,7 +158,6 @@ export default function AccountPage() {
           ))}
         </div>
 
-        {/* Logout */}
         <button onClick={logout} style={{
           width: "100%", padding: "13px", borderRadius: "12px", cursor: "pointer", fontFamily: "inherit",
           background: "#fff", border: "0.5px solid #FECACA", color: "#DC2626", fontSize: "14px", fontWeight: 500,

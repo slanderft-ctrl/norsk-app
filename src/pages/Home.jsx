@@ -45,7 +45,6 @@ const [profile, setProfile] = useState(null)
 useEffect(() => {
   if (!user) return
 
-  // Слова
   supabase.from("my_words").select("id").eq("user_id", user.id)
     .then(({ data }) => setMyWords(data ?? []))
 
@@ -59,29 +58,24 @@ useEffect(() => {
     <main className="flex-1 p-6 bg-[#F8F7F4]">
       <div className="max-w-4xl mx-auto flex flex-col gap-6">
 
-        {/* Привітання */}
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Доброго дня! 👋</h1>
           <p className="text-sm text-gray-500 mt-1">Продовжуй вчити норвезьку — ти на правильному шляху.</p>
         </div>
 
-        {/* Статистика */}
         <div className="grid grid-cols-3 gap-3">
           <StatCard icon="🔥" label="Днів поспіль" value={profile?.streak ?? 0} color="bg-orange-50" />
           <StatCard icon="📘" label="Слів у словнику" value={myWords.length} color="bg-blue-50" />
           <StatCard icon="✅" label="Тем завершено" value={`${doneTopic}/${totalTopics}`} color="bg-teal-50" />
         </div>
 
-        {/* Основний контент */}
         <div className="grid grid-cols-3 gap-5">
 
-          {/* Поточна тема */}
           <div className="col-span-2">
             <p className="text-xs text-gray-400 uppercase tracking-wider mb-3 font-medium">Поточна тема</p>
             <TopicCard />
           </div>
 
-          {/* Швидкий доступ */}
           <div className="col-span-1 flex flex-col gap-3">
             <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Швидкий доступ</p>
             <QuickCard
@@ -108,7 +102,6 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Всі теми */}
         <div>
           <p className="text-xs text-gray-400 uppercase tracking-wider mb-3 font-medium">Всі теми</p>
           <div className="grid grid-cols-3 gap-3">

@@ -58,7 +58,6 @@ export default function AiWidget({ context }) {
       flexDirection: "column",
     }}>
 
-      {/* Header */}
       <div style={{
         padding: "13px 18px",
         borderBottom: "0.5px solid #F3F4F6",
@@ -81,7 +80,6 @@ export default function AiWidget({ context }) {
         </div>
       </div>
 
-      {/* Suggestions — показуємо тільки якщо чат порожній */}
       {isEmpty && (
         <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "7px" }}>
           <p style={{ fontSize: "11px", color: "#9CA3AF", textTransform: "uppercase", letterSpacing: ".06em", fontWeight: 500, marginBottom: "2px" }}>
@@ -122,7 +120,6 @@ export default function AiWidget({ context }) {
         </div>
       )}
 
-      {/* Messages */}
       {!isEmpty && (
         <div style={{
           padding: "12px 14px",
@@ -193,7 +190,6 @@ export default function AiWidget({ context }) {
         </div>
       )}
 
-      {/* Clear button якщо є повідомлення */}
       {!isEmpty && (
         <div style={{ padding: "0 14px 6px", display: "flex", justifyContent: "flex-end" }}>
           <button
@@ -208,7 +204,6 @@ export default function AiWidget({ context }) {
         </div>
       )}
 
-      {/* Input */}
       <div style={{
         padding: "10px 12px",
         borderTop: "0.5px solid #F3F4F6",

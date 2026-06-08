@@ -49,7 +49,7 @@ export default function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { name } }  // тригер підхопить name
+          options: { data: { name } }
         })
         if (error) throw error
       }
@@ -106,7 +106,6 @@ export default function AuthPage() {
     <main style={{ minHeight: "100vh", background: "#F8F7F4", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
       <div style={{ width: "100%", maxWidth: "420px" }}>
 
-        {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
             <svg width="22" height="22" viewBox="0 0 14 14" fill="none">
@@ -122,10 +121,8 @@ export default function AuthPage() {
           <p style={{ fontSize: "13px", color: "#9CA3AF" }}>Вивчай норвезьку з AI</p>
         </div>
 
-        {/* Card */}
         <div style={{ background: "#fff", border: "0.5px solid #E5E7EB", borderRadius: "20px", padding: "28px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
 
-          {/* Tabs */}
           {!isUpdate && (
             <div style={{ display: "flex", gap: "4px", background: "#F3F4F6", borderRadius: "12px", padding: "4px", marginBottom: "24px" }}>
               {[["login","Вхід"],["signup","Реєстрація"]].map(([m, label]) => (

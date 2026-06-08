@@ -58,7 +58,6 @@ function Header({ onMenuClick }) {
   return (
     <header className="bg-white border-b border-gray-200 px-5 py-0 flex items-center gap-4 relative h-14">
 
-      {/* Логотип */}
       <button
         onClick={onMenuClick}
         className="flex items-center gap-2 shrink-0 hover:opacity-80 transition-opacity"
@@ -74,7 +73,6 @@ function Header({ onMenuClick }) {
         <span className="text-gray-900 font-semibold text-sm tracking-tight">LinguAI</span>
       </button>
 
-      {/* Пошук */}
       <div className="flex-1 max-w-lg mx-auto relative">
         <div className="flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-full px-4 py-2 focus-within:border-teal-400 focus-within:bg-white transition-colors">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0">
@@ -94,7 +92,6 @@ function Header({ onMenuClick }) {
           )}
         </div>
 
-        {/* Dropdown */}
         {showResults && query.trim() && (suggestions.length > 0 || myWordsResults.length > 0) && (
           <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl overflow-hidden z-50 shadow-lg max-h-80 overflow-y-auto">
 
@@ -136,10 +133,8 @@ function Header({ onMenuClick }) {
         )}
       </div>
 
-      {/* Права частина */}
       <div className="flex items-center gap-3 shrink-0">
 
-        {/* Streak — показуємо тільки якщо залогінений */}
         {user && (
           <div className="flex items-center gap-1.5 bg-teal-50 border border-teal-200 rounded-full px-3 py-1">
             <span className="text-teal-700 text-xs">🔥</span>
@@ -149,7 +144,6 @@ function Header({ onMenuClick }) {
           </div>
         )}
 
-        {/* Аватар або кнопка входу */}
         {user ? (
           <div className="relative">
             <button

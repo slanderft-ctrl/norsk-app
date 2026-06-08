@@ -122,7 +122,6 @@ export default function TopicPage() {
   const subtopicIdx = topic.subtopics.findIndex(s => s.id === subtopicId)
   const progress = ((subtopicIdx + (stage === STAGES.QUIZ ? 0.5 : 0)) / topic.subtopics.length) * 100
 
-  // ── EXERCISES ──────────────────────────────────────────
   const allExercises = [
     ...(subtopic.questions || []).map(q => ({ type: "question", ...q })),
     ...(subtopic.fillGaps  || []).map(q => ({ type: "fill",     ...q })),
@@ -143,12 +142,10 @@ export default function TopicPage() {
     })
   }
 
-  // ── RENDER ─────────────────────────────────────────────
   return (
     <main className="flex-1 min-h-screen p-4 md:p-8" style={{ background: "#F8F7F4" }}>
       <div className="max-w-3xl mx-auto">
 
-        {/* HEADER */}
         <div className="mb-6">
           <button
             onClick={() => navigate("/")}
@@ -162,14 +159,12 @@ export default function TopicPage() {
               {subtopicIdx + 1} / {topic.subtopics.length}
             </span>
           </div>
-          {/* Progress bar */}
           <div className="w-full bg-gray-200 rounded-full h-1.5">
             <div
               className="h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${progress}%`, background: "#0F6E56" }}
             />
           </div>
-          {/* Stage pills */}
           <div className="flex items-center gap-2 mt-3">
             {[
               { key: STAGES.READ, icon: "📖", label: "Читання" },
@@ -198,10 +193,8 @@ export default function TopicPage() {
           </div>
         </div>
 
-        {/* CARD */}
         <div className={`transition-all duration-300 ${flipping ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}>
 
-          {/* Subtopic header */}
           <div className="bg-white border border-gray-200 rounded-2xl px-5 py-4 mb-4 flex items-center gap-3 shadow-sm">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-semibold shrink-0"
@@ -221,7 +214,6 @@ export default function TopicPage() {
             </span>
           </div>
 
-          {/* ══ STAGE: READ ══════════════════════════════════ */}
           {stage === STAGES.READ && (
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-visible">
               <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
@@ -242,7 +234,6 @@ export default function TopicPage() {
               </div>
 
               <div className="flex gap-0">
-                {/* Vocabulary sidebar */}
                 {subtopic.vocabulary?.length > 0 && (
                   <div className="w-36 shrink-0 border-r border-gray-100 px-3 py-4">
                     <p className="text-xs text-gray-400 uppercase tracking-wider mb-3 font-medium">Фокус</p>
@@ -264,7 +255,6 @@ export default function TopicPage() {
                   </div>
                 )}
 
-                {/* Text */}
                 <div className="flex-1 p-5" style={{ overflow: "visible" }}>
                   <WordPopover text={subtopic.text} />
                 </div>
@@ -287,14 +277,11 @@ export default function TopicPage() {
             </div>
           )}
 
-          {/* ══ STAGE: GRAMMAR ══════════════════════════════════ */}
           {stage === STAGES.GRAMMAR && subtopic.grammar && (() => {
             const g = subtopic.grammar
 
-            // нормалізація відповіді для порівняння
             const norm = s => (s || "").trim().toLowerCase().replace(/[.,!?]/g, "").replace(/\s+/g, " ")
 
-            // індексація вправ
             const exItems = g.exercises.map((ex, i) => ({ ...ex, idx: i }))
 
             const checkAnswer = (ex) => {
@@ -306,7 +293,6 @@ export default function TopicPage() {
             return (
               <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
 
-                {/* Header */}
                 <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
                   <span className="text-base">📐</span>
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Граматика</span>
@@ -317,7 +303,6 @@ export default function TopicPage() {
 
                 <div className="p-5 flex flex-col gap-4">
 
-                  {/* Rule blocks */}
                   {g.blocks.map((b, i) => (
                     <div key={i} className="rounded-xl p-4" style={{ background: "#F8F7F4", border: "0.5px solid #E5E7EB" }}>
                       <p className="text-sm font-semibold text-gray-900 mb-1.5">{b.heading}</p>
@@ -325,12 +310,10 @@ export default function TopicPage() {
                     </div>
                   ))}
 
-                  {/* Examples */}
                   <div className="rounded-xl p-4" style={{ background: "#E1F5EE", border: "0.5px solid #9FE1CB" }}>
                     <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "#0F6E56" }}>Приклади</p>
                     <div className="flex flex-col gap-2.5">
                       {g.examples.map((ex, i) => {
-                        // підсвічуємо слово hi всередині норвезького прикладу
                         const parts = ex.hi ? ex.no.split(ex.hi) : [ex.no]
                         return (
                           <div key={i} className="flex flex-col gap-0.5">
@@ -350,7 +333,6 @@ export default function TopicPage() {
                     </div>
                   </div>
 
-                  {/* Exercises */}
                   <div>
                     <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">Вправи на правило</p>
                     <div className="flex flex-col gap-3">
@@ -364,7 +346,6 @@ export default function TopicPage() {
                           }}>
                             <p className="text-xs text-gray-400 mb-2">{ex.task}</p>
 
-                            {/* wordorder — показуємо перемішані слова */}
                             {ex.type === "wordorder" && (
                               <div className="flex flex-wrap gap-1.5 mb-3">
                                 {ex.scrambled.map((w, k) => (
@@ -373,7 +354,6 @@ export default function TopicPage() {
                               </div>
                             )}
 
-                            {/* conjugate — показуємо речення з пропуском */}
                             {ex.type === "conjugate" && (
                               <p className="text-sm text-gray-900 mb-3">{ex.sentence}</p>
                             )}
@@ -397,7 +377,6 @@ export default function TopicPage() {
                       })}
                     </div>
 
-                    {/* Check button / result */}
                     {!grammarChecked ? (
                       <button
                         onClick={() => setGrammarChecked(true)}
@@ -420,7 +399,6 @@ export default function TopicPage() {
                     )}
                   </div>
 
-                  {/* Extra block: pronunciation / lexicon */}
                   {g.extra && (
                     <div className="rounded-xl p-4" style={{
                       background: g.extra.type === "pronunciation" ? "#FAEEDA" : "#E6F1FB",
@@ -444,7 +422,6 @@ export default function TopicPage() {
 
                 </div>
 
-                {/* Footer */}
                 <div className="px-5 py-4 border-t border-gray-100 flex justify-between items-center">
                   <button onClick={() => goTo(STAGES.READ)} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
                     ← До тексту
@@ -464,14 +441,11 @@ export default function TopicPage() {
             )
           })()}
 
-          {/* ══ STAGE: QUIZ ══════════════════════════════════ */}
           {stage === STAGES.QUIZ && (() => {
 
-            // ── RESULTS ──────────────────────────────────────
             if (showResults) {
               return (
                 <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                  {/* Results header */}
                   <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
                     <span className="text-xl">✦</span>
                     <div>
@@ -487,7 +461,6 @@ export default function TopicPage() {
                     </button>
                   </div>
 
-                  {/* Results list */}
                   <div className="p-5 flex flex-col gap-3">
                     {allExercises.map((ex, idx) => {
                       const userAns = answers[idx] || "—"
@@ -501,7 +474,6 @@ export default function TopicPage() {
                             background: "#fff",
                           }}
                         >
-                          {/* Type badge + question */}
                           <div className="flex items-center gap-2 mb-2">
                             <span
                               className="text-xs font-medium px-2 py-0.5 rounded-full"
@@ -531,7 +503,6 @@ export default function TopicPage() {
                             </div>
                           </div>
 
-                          {/* AI feedback */}
                           {aiFeedback[idx] ? (
                             <div className="mt-3 rounded-lg px-3 py-2.5" style={{ background: "#F0EAFC" }}>
                               <p className="text-xs font-medium mb-1" style={{ color: "#6B3FA0" }}>✦ AI перевірка</p>
@@ -583,12 +554,10 @@ export default function TopicPage() {
               )
             }
 
-            // ── QUIZ CARD ─────────────────────────────────────
             const cfg = current ? TYPE_CONFIG[current.type] : null
             return (
               <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
 
-                {/* Quiz header */}
                 <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {cfg && (
@@ -600,7 +569,6 @@ export default function TopicPage() {
                       </span>
                     )}
                   </div>
-                  {/* Progress dots */}
                   <div className="flex items-center gap-1.5">
                     {allExercises.map((_, i) => (
                       <div
@@ -621,7 +589,6 @@ export default function TopicPage() {
                   <span className="text-xs text-gray-400 font-medium">{quizIndex + 1} / {total}</span>
                 </div>
 
-                {/* Question */}
                 {total > 0 && current ? (
                   <>
                     <div className="p-6">

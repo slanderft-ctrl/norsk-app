@@ -1,6 +1,3 @@
-// Поки тільки А1-А2
-// Поки теми 1–3, по 5 підтем кожна (15 текстів). Усього має бути 15 тем (75 текстів)
-// Формат сумісний з topics.js
 
 import {
   grammar_1_1, grammar_1_2, grammar_1_3, grammar_1_4, grammar_1_5,
@@ -9,9 +6,6 @@ import {
 } from "./grammar-blocks"
 
 export const topics = [
-  // ══════════════════════════════════════════════════════
-  // ТЕМА 1 — Introduksjon (Знайомство)
-  // ══════════════════════════════════════════════════════
   {
     id: 1,
     slug: "introduksjon",
@@ -21,7 +15,6 @@ export const topics = [
     status: "active",
     subtopics: [
 
-      // 1.1
       {
         id: "1.1",
         title: "Hei! Jeg heter…",
@@ -67,7 +60,6 @@ Marta og Daria er nye venner. De snakker norsk sammen. Det er bra!`,
         ],
       },
 
-      // 1.2
       {
         id: "1.2",
         title: "Familien min",
@@ -110,7 +102,6 @@ Marta og Daria er nye venner. De snakker norsk sammen. Det er bra!`,
         ],
       },
 
-      // 1.3
       {
         id: "1.3",
         title: "Mine hobbyer",
@@ -155,7 +146,6 @@ Hva liker du å gjøre? Liker du musikk? Liker du sport? Det er viktig å ha hob
         ],
       },
 
-      // 1.4
       {
         id: "1.4",
         title: "En ny venn",
@@ -205,7 +195,6 @@ Andrii og Fatima er nye venner. De drikker kaffe og snakker mye.`,
         ],
       },
 
-      // 1.5
       {
         id: "1.5",
         title: "På norskkurs",
@@ -251,9 +240,6 @@ Etter kurset drikker vi kaffe og prater. Vi hjelper hverandre med leksene. Norsk
     ],
   },
 
-  // ══════════════════════════════════════════════════════
-  // ТЕМА 2 — Hverdagen (Щоденне життя)
-  // ══════════════════════════════════════════════════════
   {
     id: 2,
     slug: "hverdagen",
@@ -263,7 +249,6 @@ Etter kurset drikker vi kaffe og prater. Vi hjelper hverandre med leksene. Norsk
     status: "active",
     subtopics: [
 
-      // 2.1
       {
         id: "2.1",
         title: "En vanlig dag",
@@ -313,7 +298,6 @@ Om kvelden ser jeg på TV eller leser en bok. Klokka elleve legger jeg meg. God 
         ],
       },
 
-      // 2.2
       {
         id: "2.2",
         title: "Morgenrutine",
@@ -364,7 +348,6 @@ Klokka syv er jeg klar. Jeg tar sekken og går ut.`,
         ],
       },
 
-      // 2.3
       {
         id: "2.3",
         title: "Etter jobb",
@@ -413,7 +396,6 @@ Etter middag vasker jeg opp. Så ser jeg litt på TV eller scroller på telefone
         ],
       },
 
-      // 2.4
       {
         id: "2.4",
         title: "En travel dag",
@@ -464,7 +446,6 @@ Hjemme lager jeg en rask middag. Klokka ni er jeg endelig ferdig. Jeg er veldig 
         ],
       },
 
-      // 2.5
       {
         id: "2.5",
         title: "Helg hjemme",
@@ -516,9 +497,6 @@ Om kvelden bestiller vi pizza. Vi ser på en film på Netflix. Det er den beste 
     ],
   },
 
-  // ══════════════════════════════════════════════════════
-  // ТЕМА 3 — Mat og butikk (Їжа і магазин)
-  // ══════════════════════════════════════════════════════
   {
     id: 3,
     slug: "mat-og-butikk",
@@ -528,7 +506,6 @@ Om kvelden bestiller vi pizza. Vi ser på en film på Netflix. Det er den beste 
     status: "locked",
     subtopics: [
 
-      // 3.1
       {
         id: "3.1",
         title: "På butikken",
@@ -581,7 +558,6 @@ Jeg putter varene i sekken og går hjem. Nå er kjøleskapet fullt!`,
         ],
       },
 
-      // 3.2
       {
         id: "3.2",
         title: "Jeg lager middag",
@@ -630,7 +606,6 @@ Til slutt lager jeg en enkel brun saus. Maten er klar! Jeg setter meg ved bordet
         ],
       },
 
-      // 3.3
       {
         id: "3.3",
         title: "Frokost hjemme",
@@ -679,7 +654,6 @@ Jeg spiser frokost mens jeg hører på radio. Det er en god start på dagen!`,
         ],
       },
 
-      // 3.4
       {
         id: "3.4",
         title: "På kafé",
@@ -737,7 +711,6 @@ Vi betaler og går ut. Det var en fin lørdag!`,
         ],
       },
 
-      // 3.5
       {
         id: "3.5",
         title: "Handleliste",
