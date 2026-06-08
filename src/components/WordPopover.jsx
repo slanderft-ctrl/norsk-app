@@ -1,6 +1,21 @@
 import { useState, useRef } from "react"
 
 const PUNCT = /^[\s\u2013\-!?.,;:«»""]+$/
+const WORD_EXPLANATION_PROMPT = `Ти вчитель норвезької мови для україномовного учня.
+Відповідай ТІЛЬКИ валідним JSON без markdown у форматі:
+{"explanation":"пояснення українською 1-2 речення","suggestions":["питання 1","питання 2"]}
+
+Правила для suggestions:
+- Це мають бути рівно 2 природні короткі запитання українською.
+- Формат: які ще можуть виникнути запитання щодо цього слова.
+- Питання мають допомагати краще зрозуміти саме це слово: значення, граматику, вимову, форму, типові фрази або різницю з близькими словами.
+- Не пропонуй дивні, надто загальні, особисті або не пов'язані з текстом питання.
+- Не повторюй питання "що це означає?".`
+
+const WORD_FOLLOW_UP_PROMPT = `Ти вчитель норвезької мови для україномовного учня.
+Учень питає про конкретне слово з тексту.
+Відповідай коротко українською, практично й по суті.
+Якщо доречно, додай 1 короткий приклад норвезькою з перекладом.`
 
 function tokenize(text) {
   return text.split(/(\n|[ \t]+|[–\-!?.,;:«»""]+)/g).filter(Boolean)
@@ -59,7 +74,7 @@ export default function WordPopover({ text }) {
     try {
       const raw = await callClaude(
         [{ role: "user", content: `Слово: "${activeWord}". Контекст: "${text}"` }],
-        `Ти вчитель норвезької. Відповідай ТІЛЬКИ валідним JSON без markdown: {"explanation":"пояснення українською 1-2 речення","suggestions":["коротке питання 1","коротке питання 2"]}`
+        WORD_EXPLANATION_PROMPT
       )
       let expl = raw, sugg = []
       try {
@@ -82,13 +97,15 @@ export default function WordPopover({ text }) {
   const followUp = async (question) => {
     if (loading) return
     setLoading(true); setSuggestions([])
+    const contextualQuestion = `Слово: "${activeWord}". Контекст: "${text}". Питання учня: ${question}`
     const newHistory = [...history, { role: "user", content: question }]
+    const requestHistory = [...history, { role: "user", content: contextualQuestion }]
     setHistory(newHistory); setChatInput("")
     setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50)
     try {
       const answer = await callClaude(
-        newHistory,
-        `Ти вчитель норвезької. Учень читає: "${text}". Питає про слово "${activeWord}". Відповідай коротко українською.`
+        requestHistory,
+        WORD_FOLLOW_UP_PROMPT
       )
       setHistory([...newHistory, { role: "assistant", content: answer }])
     } catch {
