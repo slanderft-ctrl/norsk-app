@@ -4,6 +4,7 @@ import { topics } from "../data/topics"
 import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../context/AuthContext"
+import { syncUserStreak } from "../lib/streak"
 
 function StatCard({ icon, label, value, color }) {
   return (
@@ -48,34 +49,7 @@ useEffect(() => {
   supabase.from("my_words").select("id").eq("user_id", user.id)
     .then(({ data }) => setMyWords(data ?? []))
 
-  // Профіль + streak логіка
-  supabase.from("profiles").select("streak, last_active, name")
-    .eq("id", user.id).single()
-    .then(async ({ data }) => {
-      if (!data) return
-
-      const today = new Date().toISOString().split("T")[0]
-      const lastActive = data.last_active?.split("T")[0]
-
-      if (lastActive !== today) {
-        const yesterday = new Date()
-        yesterday.setDate(yesterday.getDate() - 1)
-        const yesterdayStr = yesterday.toISOString().split("T")[0]
-
-        // Вчора — продовжуємо серію, інакше — скидаємо до 1
-        const newStreak = lastActive === yesterdayStr
-          ? (data.streak || 0) + 1
-          : 1
-
-        await supabase.from("profiles")
-          .update({ streak: newStreak, last_active: new Date().toISOString() })
-          .eq("id", user.id)
-
-        setProfile({ ...data, streak: newStreak })
-      } else {
-        setProfile(data)
-      }
-    })
+  syncUserStreak(user.id).then(data => setProfile(data))
 }, [user])
  
   const doneTopic = topics.filter(t => t.status === "done").length

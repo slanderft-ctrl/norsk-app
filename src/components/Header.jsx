@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../context/AuthContext"
+import { syncUserStreak } from "../lib/streak"
 
 function Header({ onMenuClick }) {
   const navigate = useNavigate()
@@ -15,12 +16,7 @@ function Header({ onMenuClick }) {
   const debounceTimer = useRef(null)
   useEffect(() => {
     if (!user) { setProfile(null); return }
-    supabase
-      .from("profiles")
-      .select("name, streak")
-      .eq("id", user.id)
-      .single()
-      .then(({ data }) => setProfile(data))
+    syncUserStreak(user.id).then(data => setProfile(data))
   }, [user])
   
   useEffect(() => {
