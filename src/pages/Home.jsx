@@ -96,7 +96,7 @@ useEffect(() => {
               icon="✦"
               title="AI-асистент"
               subtitle="Запитай про граматику"
-              onClick={() => navigate("/topic/1/1.1")}
+              onClick={() => window.dispatchEvent(new Event("linguai:focus-assistant"))}
               color="bg-purple-50"
             />
           </div>
