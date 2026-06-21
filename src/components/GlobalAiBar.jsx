@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
 
 const STORAGE_KEY = "linguai_global_ai_history"
+const TTL_MS = 24 * 60 * 60 * 1000
 
 function loadHistory() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")
-    return Array.isArray(saved) ? saved : []
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")
+    if (!raw.messages || !raw.savedAt) return []
+    if (Date.now() - raw.savedAt > TTL_MS) { localStorage.removeItem(STORAGE_KEY); return [] }
+    return Array.isArray(raw.messages) ? raw.messages : []
   } catch {
     return []
   }
@@ -16,7 +19,7 @@ export default function GlobalAiBar() {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState(loadHistory)
   const [loading, setLoading] = useState(false)
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(() => loadHistory().length > 0)
   const [focused, setFocused] = useState(false)
   const inputRef = useRef(null)
   const endRef = useRef(null)
@@ -30,20 +33,33 @@ export default function GlobalAiBar() {
       setExpanded(hasMessages)
       setTimeout(() => inputRef.current?.focus(), 60)
     }
+    const sendFromWidget = (e) => {
+      const text = e.detail?.text
+      if (!text) return
+      setExpanded(true)
+      sendRef.current?.(text)
+    }
     window.addEventListener("linguai:focus-assistant", focusBar)
-    return () => window.removeEventListener("linguai:focus-assistant", focusBar)
+    window.addEventListener("linguai:send-message", sendFromWidget)
+    return () => {
+      window.removeEventListener("linguai:focus-assistant", focusBar)
+      window.removeEventListener("linguai:send-message", sendFromWidget)
+    }
   }, [hasMessages])
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, savedAt: Date.now() }))
   }, [messages])
 
   useEffect(() => {
     if (expanded) endRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, loading, expanded])
 
-  async function send() {
-    const text = input.trim()
+  const sendRef = useRef(null)
+  useEffect(() => { sendRef.current = send }, )
+
+  async function send(overrideText) {
+    const text = (overrideText ?? input).trim()
     if (!text || loading) return
 
     const nextMessages = [...messages, { role: "user", content: text }]
@@ -118,10 +134,10 @@ export default function GlobalAiBar() {
                 <button
                   type="button"
                   onClick={() => setExpanded(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-sm text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                   aria-label="Згорнути чат"
                 >
-                  ˅
+                  ✕
                 </button>
               </div>
             </div>
