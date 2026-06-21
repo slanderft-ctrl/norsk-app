@@ -108,12 +108,7 @@ export default function AuthPage() {
 
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <svg width="22" height="22" viewBox="0 0 14 14" fill="none">
-              <path
-                d="M7 0 L8.2 5.8 L14 7 L8.2 8.2 L7 14 L5.8 8.2 L0 7 L5.8 5.8 Z"
-                fill="#0F6E56"
-              />
-            </svg>
+            <img src="/star-green.png" style={{ width: "28px", height: "28px" }} />
             <span style={{ fontSize: "22px", fontWeight: 700, color: "#111827" }}>
               Lingu<span style={{ color: "#0F6E56" }}>AI</span>
             </span>
