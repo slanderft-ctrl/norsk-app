@@ -2,15 +2,6 @@ import { useEffect, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
 
 const STORAGE_KEY = "linguai_global_ai_history"
-const SYSTEM_PROMPT = `Ти постійний AI-асистент у застосунку для вивчення норвезької мови (Bokmål).
-Відповідай українською, коротко і практично.
-Якщо користувач питає про норвезьке слово, фразу або граматику, давай 1-3 приклади норвезькою з українським перекладом.
-Не вигадуй факти про акаунт користувача або його прогрес.
-
-ВАЖЛИВО — обмеження по лінгвістиці:
-- Якщо не впевнений у діалектній або регіональній особливості норвезької — скажи "я не впевнений, але..." або "краще перевір це в орфографічному словнику".
-- НЕ видавай гіпотези за факти, особливо щодо діалектів, саамської мови та регіональних варіантів.
-- Для питань про діалекти (нордланн, трумс, фіннмарк тощо) — завжди зазнач що це діалект і рекомендуй перевірити.`
 
 function loadHistory() {
   try {
@@ -67,7 +58,6 @@ export default function GlobalAiBar() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: nextMessages.map(m => ({ role: m.role, content: m.content })),
-          systemPrompt: SYSTEM_PROMPT,
         }),
       })
       const data = await res.json()
