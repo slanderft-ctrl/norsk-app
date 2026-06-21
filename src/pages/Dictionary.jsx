@@ -134,6 +134,7 @@ export default function Dictionary() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (user === null) { navigate("/auth"); return }
     if (!user) { setLoading(false); return }
     supabase
       .from("my_words")
