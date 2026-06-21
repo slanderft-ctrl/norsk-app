@@ -127,15 +127,15 @@ function WordCard({ word, isExpanded, onToggle, onOpen, onSaveNote, onDelete }) 
 
 export default function Dictionary() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [myWords, setMyWords] = useState([])
   const [expandedId, setExpandedId] = useState(null)
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (user === null) { navigate("/auth"); return }
-    if (!user) { setLoading(false); return }
+    if (authLoading) return
+    if (!user) { navigate("/auth"); return }
     supabase
       .from("my_words")
       .select("*")
@@ -145,7 +145,7 @@ export default function Dictionary() {
         setMyWords(data ?? [])
         setLoading(false)
       })
-  }, [user])
+  }, [user, authLoading])
 
   async function saveNote(id, note) {
     setMyWords(prev => prev.map(w => w.id === id ? { ...w, note } : w))
