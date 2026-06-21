@@ -84,7 +84,7 @@ function Header({ onMenuClick }) {
             onChange={e => setQuery(e.target.value)}
             onFocus={() => setShowResults(true)}
             onBlur={() => setTimeout(() => setShowResults(false), 200)}
-            placeholder="Шукати слово норвезькою..."
+            placeholder="Шукати слово..."
             className="flex-1 bg-transparent text-gray-900 text-sm outline-none placeholder-gray-400"
           />
           {query && (

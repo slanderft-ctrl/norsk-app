@@ -25,8 +25,9 @@ export default function GlobalAiBar() {
   const inputRef = useRef(null)
   const endRef = useRef(null)
 
+  const [barHovered, setBarHovered] = useState(false)
   const hasMessages = messages.length > 0
-  const isSolid = focused || input.trim() || expanded || loading
+  const isSolid = focused || input.trim() || expanded || loading || barHovered
 
   useEffect(() => {
     const focusBar = () => {
@@ -101,8 +102,10 @@ export default function GlobalAiBar() {
           >
             <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-700 text-sm font-semibold text-white">
-                  ✦
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-700">
+                  <svg width="15" height="15" viewBox="0 0 14 14" fill="none">
+                    <path d="M7 0 L8.2 5.8 L14 7 L8.2 8.2 L7 14 L5.8 8.2 L0 7 L5.8 5.8 Z" fill="white" />
+                  </svg>
                 </div>
                 <div>
                   <p className="m-0 text-sm font-semibold text-gray-900">AI-асистент</p>
@@ -174,14 +177,17 @@ export default function GlobalAiBar() {
         )}
 
         <div
+          onMouseEnter={() => setBarHovered(true)}
+          onMouseLeave={() => setBarHovered(false)}
           className="flex items-center gap-2 border px-2.5 py-2 shadow-2xl transition-all duration-200"
           style={{
             borderRadius: "999px",
             background: isSolid ? "rgba(255,255,255,0.97)" : "rgba(255,255,255,0.58)",
-            borderColor: isSolid ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.64)",
+            borderColor: isSolid ? "rgba(209,250,229,0.9)" : "rgba(255,255,255,0.64)",
             backdropFilter: "blur(26px) saturate(1.5)",
             WebkitBackdropFilter: "blur(26px) saturate(1.5)",
             opacity: isSolid ? 1 : 0.82,
+            boxShadow: barHovered && !isSolid ? "0 8px 32px rgba(15,110,86,0.12), 0 2px 8px rgba(0,0,0,0.08)" : undefined,
           }}
         >
           <button
@@ -194,7 +200,9 @@ export default function GlobalAiBar() {
             style={{ background: "#0F6E56" }}
             aria-label="AI-асистент"
           >
-            ✦
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none">
+              <path d="M7 0 L8.2 5.8 L14 7 L8.2 8.2 L7 14 L5.8 8.2 L0 7 L5.8 5.8 Z" fill="white" />
+            </svg>
           </button>
 
           <input
@@ -209,7 +217,7 @@ export default function GlobalAiBar() {
                 send()
               }
             }}
-            placeholder="Запитай AI про норвезьку..."
+            placeholder="Запитай AI..."
             className="min-w-0 flex-1 bg-transparent px-1 text-sm text-gray-900 outline-none placeholder:text-gray-400"
           />
 
