@@ -216,7 +216,7 @@ export default function GlobalAiBar() {
             ref={inputRef}
             value={input}
             onChange={e => setInput(e.target.value)}
-            onFocus={() => setFocused(true)}
+            onFocus={() => { setFocused(true); if (hasMessages) setExpanded(true) }}
             onBlur={() => setFocused(false)}
             onKeyDown={e => {
               if (e.key === "Enter") {
@@ -236,7 +236,7 @@ export default function GlobalAiBar() {
 
           <button
             type="button"
-            onClick={send}
+            onClick={() => send()}
             disabled={!input.trim() || loading}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-all disabled:cursor-default"
             style={{
