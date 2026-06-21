@@ -63,12 +63,7 @@ function Header({ onMenuClick }) {
         className="flex items-center gap-2 shrink-0 hover:opacity-80 transition-opacity"
       >
         <div className="w-7 h-7 bg-teal-700 rounded-lg flex items-center justify-center">
-          <svg width="15" height="15" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M7 0 L8.2 5.8 L14 7 L8.2 8.2 L7 14 L5.8 8.2 L0 7 L5.8 5.8 Z"
-              fill="white"
-            />
-          </svg>
+          <img src="/star.png" className="w-4 h-4" />
         </div>
         <span className="text-gray-900 font-semibold text-sm tracking-tight">LinguAI</span>
       </button>
