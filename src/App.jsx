@@ -37,7 +37,6 @@ function AppContent() {
         <Route path="/dictionary/:word" element={<WordPage />} />
         <Route path="/listening" element={<Listening />} />
         <Route path="/dictionary" element={<Dictionary />} />
-        <Route path="/my-words" element={<Dictionary />} />
         <Route path="/topic/:topicId/:subtopicId" element={<TopicPage />} />
         <Route path="/level-test" element={<LevelTest />} />
       </Routes>
