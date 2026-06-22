@@ -74,7 +74,7 @@ useEffect(() => {
             value={myWords.length}
             color="bg-blue-50"
             hoverText="Перейти до словника"
-            onClick={() => navigate("/my-words")}
+            onClick={() => navigate("/dictionary")}
           />
         </div>
 
