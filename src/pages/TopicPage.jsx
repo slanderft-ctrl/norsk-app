@@ -24,7 +24,7 @@ export default function TopicPage() {
   const [stage, setStage] = useState(saved.stage || STAGES.READ)
   const [showResults, setShowResults] = useState(false)
   const [flipping, setFlipping] = useState(false)
-  const [quizIndex, setQuizIndex] = useState(0)
+  const [quizIndex, setQuizIndex] = useState(saved.quizIndex || 0)
   const [answers, setAnswers] = useState({})
   const [speaking, setSpeaking] = useState(false)
   const [aiFeedback, setAiFeedback] = useState({})
@@ -268,8 +268,8 @@ export default function TopicPage() {
                   onClick={() => goTo(subtopic.grammar ? STAGES.GRAMMAR : STAGES.QUIZ)}
                   className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium text-white transition-colors"
                   style={{ background: "#0F6E56" }}
-                  onMouseEnter={e => e.target.style.background = "#0D5E48"}
-                  onMouseLeave={e => e.target.style.background = "#0F6E56"}
+                  onMouseEnter={e => e.currentTarget.style.background = "#0D5E48"}
+                  onMouseLeave={e => e.currentTarget.style.background = "#0F6E56"}
                 >
                   {subtopic.grammar ? "📐 До граматики →" : "✏️ До вправ →"}
                 </button>
