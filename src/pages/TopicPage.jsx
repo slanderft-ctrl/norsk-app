@@ -65,7 +65,11 @@ export default function TopicPage() {
         }),
       })
       const data = await res.json()
-      setAiFeedback(prev => ({ ...prev, [idx]: data.content?.[0]?.text || "" }))
+      if (!res.ok) {
+        setAiFeedback(prev => ({ ...prev, [idx]: "Не вдалося отримати перевірку. Спробуй ще раз." }))
+        return
+      }
+      setAiFeedback(prev => ({ ...prev, [idx]: data.content?.[0]?.text || "Не вдалося отримати відповідь." }))
     } catch {
       setAiFeedback(prev => ({ ...prev, [idx]: "Помилка з'єднання." }))
     } finally {
