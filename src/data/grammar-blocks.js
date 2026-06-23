@@ -505,6 +505,366 @@ export const grammar_3_4 = {
   },
 }
 
+export const grammar_5_1 = {
+  topic: "Означена форма іменників (bestemt form)",
+  blocks: [
+    {
+      heading: "Додаємо закінчення, щоб сказати «цей/ця/це»",
+      text: "В норвезькій означеність передається закінченням іменника, а не окремим словом. en-іменники (чол./жін.): + -en → en bror → broren (брат → цей брат). et-іменники (середній рід): + -et → et hus → huset (дім → цей дім). Множина: + -ene → brødre → brødrene. Статті перед іменником у такому разі немає.",
+    },
+    {
+      heading: "Коли вживається означена форма?",
+      text: "Означена форма вживається, коли ми вже знаємо, про що йдеться, або коли іменник є єдиним у своєму роді в контексті: Barnet sover (Дитина спить — ця конкретна дитина). У поєднанні з присвійним займенником після іменника теж вживається означена форма: huset mitt (мій дім — буквально «дім-цей мій»).",
+    },
+  ],
+  examples: [
+    { no: "Familien min bor i Ukraina.", ua: "Моя сім'я живе в Україні.", hi: "Familien" },
+    { no: "Barnet sover nå.", ua: "Дитина зараз спить.", hi: "Barnet" },
+    { no: "Søsteren min er gift.", ua: "Моя сестра одружена.", hi: "Søsteren" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Постав іменник в означену форму (en bror)", sentence: "en bror → ___", answer: "broren" },
+    { type: "conjugate", task: "Постав іменник в означену форму (et barn)", sentence: "et barn → ___", answer: "barnet" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["min", "Familien", "bor", "i Ukraina"], answer: "Familien min bor i Ukraina" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["nå", "Barnet", "sover"], answer: "Barnet sover nå" },
+  ],
+  extra: {
+    type: "lexicon",
+    title: "Означені форми — сімейна лексика",
+    intro: "Найуживаніші слова сім'ї в означеній формі:",
+    items: [
+      { word: "en mor → moren", note: "мама → ця мама" },
+      { word: "en far → faren", note: "тато → цей тато" },
+      { word: "et barn → barnet", note: "дитина → ця дитина" },
+      { word: "en søster → søsteren", note: "сестра → ця сестра" },
+    ],
+  },
+}
+
+export const grammar_5_2 = {
+  topic: "Присвійність з прийменником «til»",
+  blocks: [
+    {
+      heading: "til = «від / у» для позначення приналежності",
+      text: "Один зі способів сказати «чийсь» — конструкція іменник + til + власник: huset til Marta (дім Марти), bilen til naboen (машина сусіда). Це простіша і дуже поширена розмовна форма. Сам іменник при цьому стоїть в означеній формі.",
+    },
+    {
+      heading: "til vs min/din: обидва правильні",
+      text: "Huset til Marta = Martas hus = huset hennes — усі три форми правильні. У розмові найчастіше вживається конструкція з til, особливо коли власник — це ім'я або іменник, а не займенник.",
+    },
+  ],
+  examples: [
+    { no: "Huset til naboen er stort.", ua: "Дім сусіда великий.", hi: "til naboen" },
+    { no: "Bilen til faren min er gammel.", ua: "Машина мого тата стара.", hi: "til faren min" },
+    { no: "Navnet til barnet er Nora.", ua: "Ім'я дитини — Нора.", hi: "til barnet" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Скажи «дім Марти» через til", sentence: "___ til Marta er stort.", answer: "Huset" },
+    { type: "conjugate", task: "Встав означену форму", sentence: "Bilen til ___ er gammel. (en nabo)", answer: "naboen" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["til naboen", "Huset", "er", "stort"], answer: "Huset til naboen er stort" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["til barnet", "Navnet", "er", "Nora"], answer: "Navnet til barnet er Nora" },
+  ],
+  extra: {
+    type: "lexicon",
+    title: "Лексика: домашнє господарство",
+    intro: "Хатні справи, які часто обговорюють у тексті:",
+    items: [
+      { word: "å støvsuge", note: "пилосмоктити" },
+      { word: "å vaske klær", note: "прати одяг" },
+      { word: "å lage mat", note: "готувати їжу" },
+      { word: "å ta oppvasken", note: "мити посуд" },
+    ],
+  },
+}
+
+export const grammar_5_3 = {
+  topic: "Модальні дієслова: skal, vil, må, kan",
+  blocks: [
+    {
+      heading: "Чотири модальних дієслова + інфінітив БЕЗ å",
+      text: "skal (збираюся / буду), vil (хочу), må (мушу), kan (можу) — після них інфінітив іде БЕЗ частки å. Jeg skal rydde (Я збираюся прибрати). Jeg vil se på TV (Хочу дивитися ТБ). Jeg må vaske klær (Мушу прати). Jeg kan hjelpe deg (Можу допомогти тобі).",
+    },
+    {
+      heading: "skal vs vil: план vs бажання",
+      text: "skal — це план, розклад або домовленість: Vi skal møtes i morgen (Ми зустрінемося завтра — це вже вирішено). vil — бажання або намір: Jeg vil lære norsk (Я хочу вивчити норвезьку). У майбутньому часі skal частіше, ніж vil.",
+    },
+  ],
+  examples: [
+    { no: "Jeg skal rydde leiligheten i dag.", ua: "Сьогодні я прибираю квартиру.", hi: "skal rydde" },
+    { no: "Kan du hjelpe meg?", ua: "Ти можеш мені допомогти?", hi: "Kan" },
+    { no: "Vi må lage middag nå.", ua: "Нам потрібно зараз готувати вечерю.", hi: "må lage" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Встав модальне дієслово (хочу)", sentence: "Jeg ___ lære norsk.", answer: "vil" },
+    { type: "conjugate", task: "Встав модальне дієслово (можеш?)", sentence: "___ du hjelpe meg?", answer: "Kan" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["skal", "Jeg", "rydde", "i dag"], answer: "Jeg skal rydde i dag" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["nå", "Vi", "må", "lage middag"], answer: "Vi må lage middag nå" },
+  ],
+  extra: {
+    type: "pronunciation",
+    title: "Вимова: u / ø / øy",
+    intro: "Три звуки, яких немає в українській — вимагають округлення губ:",
+    items: [
+      { word: "hus", read: "гюс", note: "u = «ю» (губи як для «у», мова як для «і»)" },
+      { word: "øvelse", read: "ǿвелсе", note: "ø = «е» з округленими губами" },
+      { word: "høy", read: "хой", note: "øy = «ой» (дифтонг)" },
+      { word: "kjøkken", read: "шо́кен", note: "kjø = «шо»" },
+    ],
+  },
+}
+
+export const grammar_5_4 = {
+  topic: "Прислівники місця: hjem/hjemme, ute/ut, inne/inn",
+  blocks: [
+    {
+      heading: "Два прислівники для кожного місця: рух і стан",
+      text: "Норвезька розрізняє статичне положення і рух. hjemme = вдома (де?), hjem = додому (куди?). ute = надворі, ut = назовні. inne = всередині, inn = всередину. Я stå hjemme (стоять вдома) vs. gå hjem (іти додому). Ці пари треба запам'ятати разом.",
+    },
+    {
+      heading: "Питання «де?» vs «куди?»",
+      text: "де? → hjemme, ute, inne, her, der. куди? → hjem, ut, inn, hit, dit. Підказка: якщо після дієслова є рух (gå, kjøre, komme), — вживай форму руху (hjem, ut, inn). Якщо дієслово статичне (bo, sitte, være), — форму стану (hjemme, ute, inne).",
+    },
+  ],
+  examples: [
+    { no: "Jeg er hjemme hele dagen.", ua: "Я вдома цілий день.", hi: "hjemme" },
+    { no: "Vi går ut etter middag.", ua: "Ми виходимо надвір після вечері.", hi: "ut" },
+    { no: "Kom inn!", ua: "Заходь!", hi: "inn" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Де? або куди? Встав правильний прислівник (вдома — стан)", sentence: "Jeg er ___ hele dagen.", answer: "hjemme" },
+    { type: "conjugate", task: "Де? або куди? Встав правильний прислівник (куди — рух)", sentence: "Jeg går ___ nå. (додому)", answer: "hjem" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["ut", "Vi", "går", "etter middag"], answer: "Vi går ut etter middag" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["hjemme", "Jeg", "er", "i dag"], answer: "Jeg er hjemme i dag" },
+  ],
+  extra: {
+    type: "lexicon",
+    title: "Пари прислівників місця",
+    intro: "Запам'ятай разом — стан (де?) і рух (куди?):",
+    items: [
+      { word: "hjemme / hjem", note: "вдома / додому" },
+      { word: "ute / ut", note: "надворі / назовні" },
+      { word: "inne / inn", note: "всередині / всередину" },
+      { word: "her / hit · der / dit", note: "тут / сюди · там / туди" },
+    ],
+  },
+}
+
+export const grammar_5_5 = {
+  topic: "Спörreord: hvor mange + домовленості через SMS",
+  blocks: [
+    {
+      heading: "hvor mange = скільки (для злічуваних)",
+      text: "Питання про кількість: Hvor mange barn har du? (Скільки у тебе дітей?) Після hvor mange іменник завжди стоїть у множині: barn, venner, timer. Для незлічуваних: Hvor mye (скільки + вага/рідина/гроші): Hvor mye koster det?",
+    },
+    {
+      heading: "SMS і домовленості: скорочений стиль",
+      text: "У SMS норвежці часто використовують: Ha det! (Бувай!), Sees! (Побачимось!), OK!, Kl. 18 (о 18:00). Дієслово Vi ses / Sees (Побачимося) — зворотна форма. Щоб домовитися: Vi kan møtes klokka seks? — Ми могли б зустрітися о шостій?",
+    },
+  ],
+  examples: [
+    { no: "Hvor mange søsken har du?", ua: "Скільки у тебе братів і сестер?", hi: "Hvor mange" },
+    { no: "Vi kan møtes klokka seks?", ua: "Ми можемо зустрітися о шостій?", hi: "møtes" },
+    { no: "Sees i morgen!", ua: "Побачимося завтра!", hi: "Sees" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Встав питальне слово (скільки — злічуване)", sentence: "___ barn har du?", answer: "Hvor mange" },
+    { type: "conjugate", task: "Постав дієслово у presens", sentence: "Vi ___ møtes klokka seks. (å kunne)", answer: "kan" },
+    { type: "wordorder", task: "Склади питання", scrambled: ["søsken", "Hvor mange", "har", "du"], answer: "Hvor mange søsken har du" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["møtes", "Vi", "kan", "klokka seks"], answer: "Vi kan møtes klokka seks" },
+  ],
+  extra: {
+    type: "lexicon",
+    title: "SMS-фрази і домовленості",
+    intro: "Фрази, що часто трапляються в SMS і коротких повідомленнях:",
+    items: [
+      { word: "Sees! / Vi ses!", note: "Побачимося!" },
+      { word: "Ha det (bra)!", note: "Бувай (добре)!" },
+      { word: "Kl. + число", note: "скорочення від klokka (о … годині)" },
+      { word: "Passer det?", note: "Тобі підходить? / Зручно?" },
+    ],
+  },
+}
+
+export const grammar_4_1 = {
+  topic: "Особові займенники у формі об'єкта",
+  blocks: [
+    {
+      heading: "Два набори займенників: суб'єкт і об'єкт",
+      text: "В норвезькій у займенників є дві форми: суб'єктна (jeg, du, han, hun, vi, dere, de) і об'єктна (meg, deg, ham, henne, oss, dere, dem). Об'єктна форма вживається, коли займенник є додатком — стоїть після дієслова або прийменника: Vent på meg! (Чекай на мене!), Kan jeg hjelpe deg? (Чи можу я допомогти тобі?).",
+    },
+    {
+      heading: "SVO — базовий порядок речення",
+      text: "Норвезьке речення будується за схемою підмет → дієслово → об'єкт (SVO). Займенник-об'єкт стоїть після дієслова: Jeg ser deg (Я бачу тебе), Jeg ringer ham (Я дзвоню йому). Після прийменника — теж об'єктна форма: med ham, til meg, på deg.",
+    },
+  ],
+  examples: [
+    { no: "Vent på meg!", ua: "Чекай на мене!", hi: "meg" },
+    { no: "Kan jeg hjelpe deg?", ua: "Можу я тобі допомогти?", hi: "deg" },
+    { no: "Jeg ser på ham.", ua: "Я дивлюся на нього.", hi: "ham" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Встав займенник у формі об'єкта (мене)", sentence: "Vent på ___!", answer: "meg" },
+    { type: "conjugate", task: "Встав займенник у формі об'єкта (тебе)", sentence: "Kan jeg ringe til ___?", answer: "deg" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["på", "Vent", "meg"], answer: "Vent på meg" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["ser", "Jeg", "deg"], answer: "Jeg ser deg" },
+  ],
+  extra: {
+    type: "lexicon",
+    title: "Таблиця займенників",
+    intro: "Суб'єктна та об'єктна форма — запам'ятай пари:",
+    items: [
+      { word: "jeg → meg", note: "я → мене / мені" },
+      { word: "du → deg", note: "ти → тебе / тобі" },
+      { word: "han → ham", note: "він → його / йому" },
+      { word: "hun → henne", note: "вона → її / їй" },
+    ],
+  },
+}
+
+export const grammar_4_2 = {
+  topic: "Питальні слова: når, hvor gammel + місяці та роки",
+  blocks: [
+    {
+      heading: "Коли? Скільки років? — питальні слова для часу і віку",
+      text: "Два ключові питальні слова теми: når (коли) і hvor gammel (скільки років). Дослівно «наскільки старий» — відповідь: Jeg er [число] år gammel. Питання про вік у Норвегії ставлять без зайвих церемоній. Hva er fødselsdatoen din? — Яка ваша дата народження?",
+    },
+    {
+      heading: "Дати й роки по-норвезьки",
+      text: "Дата: den + порядковий числівник + назва місяця. Den syttende mars = 17 березня. Назви місяців пишуться з малої букви. Рік: to tusen og tjuetre (2023). Частка og між «to tusen» і числом обов'язкова при вимові.",
+    },
+  ],
+  examples: [
+    { no: "Når er du født?", ua: "Коли ти народився/народилася?", hi: "Når" },
+    { no: "Jeg er tjueåtte år gammel.", ua: "Мені двадцять вісім років.", hi: "gammel" },
+    { no: "Jeg er født den syttende mars.", ua: "Я народився 17 березня.", hi: "den syttende" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Встав питальне слово (коли)", sentence: "___ er du født?", answer: "Når" },
+    { type: "conjugate", task: "Встав слово", sentence: "Jeg er tjuefem ___ gammel.", answer: "år" },
+    { type: "wordorder", task: "Склади питання", scrambled: ["gammel", "Hvor", "er", "du"], answer: "Hvor gammel er du" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["er", "Jeg", "født", "den", "syvende", "april"], answer: "Jeg er født den syvende april" },
+  ],
+  extra: {
+    type: "lexicon",
+    title: "Місяці року (månedene)",
+    intro: "Усі місяці по-норвезьки пишуться з малої букви:",
+    items: [
+      { word: "januar, februar, mars", note: "січень, лютий, березень" },
+      { word: "april, mai, juni", note: "квітень, травень, червень" },
+      { word: "juli, august, september", note: "липень, серпень, вересень" },
+      { word: "oktober, november, desember", note: "жовтень, листопад, грудень" },
+    ],
+  },
+}
+
+export const grammar_4_3 = {
+  topic: "Прийменники місця: i та på для адреси",
+  blocks: [
+    {
+      heading: "i + місто або район",
+      text: "Для позначення міста або великого місця вживається прийменник i: bor i Bergen, bor i Oslo, bor i Åsane. Це відповідає українському «у» перед назвою міста. Також: i en leilighet (у квартирі).",
+    },
+    {
+      heading: "på + конкретна вулиця або площа",
+      text: "Для конкретних адрес — вулиць і площ — вживається på: bor på Danmarksplass, på Storgata, på første etasje (на першому поверсі). Це відповідає українському «на» перед назвою вулиці чи місця.",
+    },
+  ],
+  examples: [
+    { no: "Jeg bor i Bergen.", ua: "Я живу в Бергені.", hi: "i" },
+    { no: "Jeg bor på Danmarksplass.", ua: "Я живу на Данмаркспласс.", hi: "på" },
+    { no: "Det er en butikk i gata.", ua: "На цій вулиці є магазин.", hi: "i gata" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Встав правильний прийменник (місто)", sentence: "Jeg bor ___ Oslo.", answer: "i" },
+    { type: "conjugate", task: "Встав правильний прийменник (вулиця)", sentence: "Jeg bor ___ Karl Johans gate.", answer: "på" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["bor", "Jeg", "Bergen", "i"], answer: "Jeg bor i Bergen" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["bor", "Jeg", "Storgata", "på"], answer: "Jeg bor på Storgata" },
+  ],
+  extra: {
+    type: "pronunciation",
+    title: "Вимова адресних слів",
+    intro: "Слова, що часто зустрічаються в адресах і звернули б увагу:",
+    items: [
+      { word: "gate", read: "га́те", note: "g м'яке, e на кінці читається" },
+      { word: "leilighet", read: "ле́йліхет", note: "ei = «ей»" },
+      { word: "etasje", read: "ета́ше", note: "sj = «ш»" },
+      { word: "postnummer", read: "по́стнумер", note: "два окремі слова злиті" },
+    ],
+  },
+}
+
+export const grammar_4_4 = {
+  topic: "Рід іменників і множина в норвезькій",
+  blocks: [
+    {
+      heading: "Три роди: en, ei, et",
+      text: "Норвезькі іменники мають три роди: чоловічий (en), жіночий (ei) і середній (et). У Bokmål жіночий рід зазвичай збігається з чоловічим — en dame або ei dame — обидва варіанти правильні. Рід треба запам'ятовувати разом зі словом: en venn, en mann, et barn, et hus.",
+    },
+    {
+      heading: "Множина: -er, -r або без змін",
+      text: "Більшість en-іменників утворюють множину через -er: en venn → venner, en gate → gater. Деякі et-іменники множину не змінюють: et barn → barn, et hus → hus. Є й неправильні: en mann → menn. Вчи множину разом з однинним словом.",
+    },
+  ],
+  examples: [
+    { no: "en venn → venner", ua: "друг → друзі", hi: "venner" },
+    { no: "et barn → barn", ua: "дитина → діти", hi: "barn" },
+    { no: "en mann → menn", ua: "чоловік → чоловіки", hi: "menn" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Утвори множину", sentence: "en venn → (pl.) ___", answer: "venner" },
+    { type: "conjugate", task: "Утвори множину", sentence: "et barn → (pl.) ___", answer: "barn" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["mange", "Jeg", "har", "venner"], answer: "Jeg har mange venner" },
+    { type: "wordorder", task: "Постав слова у правильному порядку", scrambled: ["to", "har", "Fatima", "barn"], answer: "Fatima har to barn" },
+  ],
+  extra: {
+    type: "lexicon",
+    title: "Сімейний стан (sivilstatus)",
+    intro: "Слова, що описують стосунки та сімейний стан:",
+    items: [
+      { word: "gift", note: "одружений/одружена" },
+      { word: "enslig", note: "самотній/самотня" },
+      { word: "samboer", note: "співмешканець/ка" },
+      { word: "forlovet", note: "заручений/заручена" },
+    ],
+  },
+}
+
+export const grammar_4_5 = {
+  topic: "Інверсія з часовим виразом + вимова e, i, y",
+  blocks: [
+    {
+      heading: "Інверсія: обставина часу на початку речення",
+      text: "Коли речення починається з обставини часу — Nå (зараз), I august (у серпні), I fjor (торік) — дієслово залишається на другому місці, а підмет переходить після нього. Nå ser jeg etter jobb (дослівно «Зараз шукаю я роботу»). I august kom Bohdan til Norge — дієслово kom одразу після I august.",
+    },
+    {
+      heading: "Вимова: e, i, y — три різні звуки",
+      text: "e = «е» (відкрите або закрите): heter «ге́тер», sende «се́нне». i = чисте «і» як в українській: til «тіль», ni «ні». y = особливий звук: вимовляй «і», але з губами округленими як для «у» — ny = «ню», typisk = «тю́піск», hyggelig = «гю́ґелі». Цього звуку немає в українській, тренуй окремо.",
+    },
+  ],
+  examples: [
+    { no: "Nå ser jeg etter jobb.", ua: "Зараз я шукаю роботу.", hi: "Nå ser jeg" },
+    { no: "I august kom Bohdan til Norge.", ua: "У серпні Богдан приїхав до Норвегії.", hi: "kom Bohdan" },
+    { no: "Det er typisk norsk!", ua: "Це типово по-норвезьки!", hi: "typisk" },
+  ],
+  exercises: [
+    { type: "conjugate", task: "Постав дієслово у presens", sentence: "Nå ___ jeg på kurs. (å gå)", answer: "går" },
+    { type: "conjugate", task: "Постав дієслово (минулий час)", sentence: "I fjor ___ hun til Norge. (å komme)", answer: "kom" },
+    { type: "wordorder", task: "Постав слова (починається з 'Nå')", scrambled: ["Nå", "jeg", "ser", "etter jobb"], answer: "Nå ser jeg etter jobb" },
+    { type: "wordorder", task: "Постав слова (починається з 'I august')", scrambled: ["I august", "til Norge", "kom", "Bohdan"], answer: "I august kom Bohdan til Norge" },
+  ],
+  extra: {
+    type: "pronunciation",
+    title: "Вимова: e / i / y",
+    intro: "Три різних звуки — не плутай їх:",
+    items: [
+      { word: "ny", read: "ню", note: "y = «і» з округленими губами" },
+      { word: "typisk", read: "тю́піск", note: "y на початку слова" },
+      { word: "hyggelig", read: "гю́ґелі", note: "y після h" },
+      { word: "ni", read: "ні", note: "i = чисте «і»" },
+    ],
+  },
+}
+
 export const grammar_3_5 = {
   topic: "Одиниці кількості й конструкція «å trenge»",
   blocks: [

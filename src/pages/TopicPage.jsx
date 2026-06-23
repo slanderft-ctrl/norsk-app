@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { topics } from "../data/topics"
 import WordPopover from "../components/WordPopover"
+import { supabase } from "../lib/supabase"
 
 const STAGES = { READ: "read", GRAMMAR: "grammar", QUIZ: "quiz" }
 
@@ -48,9 +49,13 @@ export default function TopicPage() {
         ? `Речення: "${exercise.sentence}"\nВідповідь учня: "${userAnswer}"\nПравильна відповідь: "${correctAnswer}"`
         : `Переклади норвезькою: "${exercise.ua}"\nВідповідь учня: "${userAnswer}"\nПравильний переклад: "${correctAnswer}"`
     try {
+      const { data: { session } } = await supabase.auth.getSession()
       const res = await fetch("/api/Chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+        },
         body: JSON.stringify({
           messages: [{ role: "user", content: prompt }],
           systemPrompt: `Ти вчитель норвезької мови. Оціни відповідь учня коротко (2-3 речення) українською:

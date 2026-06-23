@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
+import { supabase } from "../lib/supabase"
 
 const STORAGE_KEY = "linguai_global_ai_history"
 const TTL_MS = 24 * 60 * 60 * 1000
@@ -69,9 +70,13 @@ export default function GlobalAiBar() {
     setLoading(true)
 
     try {
+      const { data: { session } } = await supabase.auth.getSession()
       const res = await fetch("/api/Chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+        },
         body: JSON.stringify({
           messages: nextMessages.map(m => ({ role: m.role, content: m.content })),
         }),

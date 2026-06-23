@@ -1,3 +1,5 @@
+import { createClient } from "@supabase/supabase-js"
+
 const SYSTEM_PROMPT = `Ти постійний AI-асистент у застосунку для вивчення норвезької мови (Bokmål).
 Відповідай українською, коротко і практично.
 Якщо користувач питає про норвезьке слово, фразу або граматику, давай 1-3 приклади норвезькою з українським перекладом.
@@ -11,6 +13,21 @@ const SYSTEM_PROMPT = `Ти постійний AI-асистент у засто
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" })
+  }
+
+  const authHeader = req.headers.authorization
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" })
+  }
+  const token = authHeader.slice(7)
+
+  const supabase = createClient(
+    process.env.VITE_SUPABASE_URL,
+    process.env.VITE_SUPABASE_ANON_KEY
+  )
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+  if (authError || !user) {
+    return res.status(401).json({ error: "Unauthorized" })
   }
 
   const { messages, systemPrompt } = req.body

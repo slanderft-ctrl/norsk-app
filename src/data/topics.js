@@ -3,6 +3,8 @@ import {
   grammar_1_1, grammar_1_2, grammar_1_3, grammar_1_4, grammar_1_5,
   grammar_2_1, grammar_2_2, grammar_2_3, grammar_2_4, grammar_2_5,
   grammar_3_1, grammar_3_2, grammar_3_3, grammar_3_4, grammar_3_5,
+  grammar_4_1, grammar_4_2, grammar_4_3, grammar_4_4, grammar_4_5,
+  grammar_5_1, grammar_5_2, grammar_5_3, grammar_5_4, grammar_5_5,
 } from "./grammar-blocks"
 
 export const topics = [
@@ -769,4 +771,507 @@ Jeg finner alt på listen. Prisen er bra – jeg bruker ikke for mye penger. God
 
     ],
   },
+
+  {
+    id: 4,
+    slug: "hvordan-gar-det",
+    title: "Hvordan går det?",
+    titleUa: "Як справи?",
+    level: "A1",
+    status: "locked",
+    subtopics: [
+
+      {
+        id: "4.1",
+        title: "Hei! Hvordan går det?",
+        titleUa: "Привіт! Як справи?",
+        grammarFocus: ["object pronouns: meg, deg, ham, henne", "SVO word order", "greeting phrases"],
+        text: `Det er mandag morgen. Lena møter naboen sin, Ivan, i gangen.
+
+– Hei, Ivan! Hvordan går det med deg?
+– Hei, Lena! Det går bra, takk. Og med deg?
+– Fint, takk! Er du trøtt? Du ser litt trøtt ut.
+– Ja, litt. Jeg sov dårlig i natt. Og du – hva gjør du i dag?
+– Jeg går på norskkurs klokka ti. Etterpå skal jeg handle.
+– Akkurat det samme! Vi kan gå sammen?
+– Ja, gjerne! Vent på meg – jeg tar sekken.
+
+De går til busstoppen sammen. Det er hyggelig å ha en god nabo!`,
+        vocabulary: [
+          { word: "en nabo" },
+          { word: "en gang" },
+          { word: "å se ut" },
+          { word: "dårlig" },
+          { word: "i natt" },
+          { word: "å vente" },
+          { word: "akkurat" },
+          { word: "et busstop" },
+        ],
+        grammar: grammar_4_1,
+        questions: [
+          { q: "Hva gjør Lena i dag?", a: "Hun går på norskkurs og handler etterpå." },
+          { q: "Hvorfor er Ivan trøtt?", a: "Han sov dårlig i natt." },
+          { q: "Hva gjør de til slutt?", a: "De går til busstoppen sammen." },
+          { q: "Hva sier Lena når Ivan vil gå?", a: "Vent på meg – jeg tar sekken." },
+        ],
+        fillGaps: [
+          { sentence: "Hvordan går det med ___? (deg)", answer: "deg" },
+          { sentence: "Vent på ___! (meg)", answer: "meg" },
+          { sentence: "Jeg sov dårlig i ___. (natt)", answer: "natt" },
+          { sentence: "Det er hyggelig å ha en god ___. (nabo)", answer: "nabo" },
+        ],
+        translate: [
+          { ua: "Як справи?", no: "Hvordan går det med deg?" },
+          { ua: "Чекай на мене!", no: "Vent på meg!" },
+          { ua: "Приємно мати гарного сусіда!", no: "Det er hyggelig å ha en god nabo!" },
+        ],
+      },
+
+      {
+        id: "4.2",
+        title: "Alder og fødselsdato",
+        titleUa: "Вік і дата народження",
+        grammarFocus: ["question words: når, hvor gammel", "numbers 1–100", "months and years"],
+        text: `Marta er på kommunekontoret. Hun skal registrere seg. En vennlig dame hjelper henne.
+
+– Hva heter du?
+– Jeg heter Marta Kovalenko.
+– Hva er fødselsdatoen din?
+– Jeg er født den syttende mars, nitten nittisju.
+– Så du er tjueåtte år gammel?
+– Ja, det stemmer. Jeg fyller tjueni i mars.
+– Og hva er telefonnummeret ditt?
+– Det er null fire sju – to to – tre tre – null åtte.
+– Takk. Når kom du til Norge?
+– Jeg kom i januar, to tusen og tjuetre.
+– Bra! Snakker du allerede litt norsk?
+– Ja, litt! Jeg lærer!
+
+Damen smiler. Marta er fornøyd.`,
+        vocabulary: [
+          { word: "et kommunekontor" },
+          { word: "å registrere seg" },
+          { word: "å være født" },
+          { word: "å fylle år" },
+          { word: "en fødselsdato" },
+          { word: "siden" },
+          { word: "fornøyd" },
+          { word: "å stemme" },
+        ],
+        grammar: grammar_4_2,
+        questions: [
+          { q: "Når er Marta født?", a: "Den syttende mars, 1997." },
+          { q: "Hvor gammel er hun?", a: "Hun er tjueåtte år gammel." },
+          { q: "Når kom hun til Norge?", a: "I januar 2023." },
+          { q: "Hva gjør hun på kommunekontoret?", a: "Hun registrerer seg." },
+        ],
+        fillGaps: [
+          { sentence: "Jeg er ___ den syttende mars. (å være født)", answer: "født" },
+          { sentence: "Jeg ___ tjueni i mars. (å fylle år)", answer: "fyller" },
+          { sentence: "Ja, det ___! (å stemme)", answer: "stemmer" },
+          { sentence: "Marta er ___. (fornøyd)", answer: "fornøyd" },
+        ],
+        translate: [
+          { ua: "Коли ти народився/народилася?", no: "Når er du født?" },
+          { ua: "Мені двадцять п'ять років.", no: "Jeg er tjuefem år gammel." },
+          { ua: "Я приїхала до Норвегії у вересні.", no: "Jeg kom til Norge i september." },
+        ],
+      },
+
+      {
+        id: "4.3",
+        title: "Telefon og adresse",
+        titleUa: "Телефон і адреса",
+        grammarFocus: ["prepositions i / på for location", "phone number format", "SVO sentences"],
+        text: `Kurset er slutt. Nadia og Oksana snakker utenfor bygningen.
+
+– Nadia, kan jeg få telefonnummeret ditt?
+– Ja, selvfølgelig! Det er null fire to – femti tre – tjueto – sekstini.
+– Og hvor bor du?
+– Jeg bor i Bergen, på Danmarksplass. Og du?
+– Jeg bor i Åsane, i en liten leilighet. Har du det bra der?
+– Ja, det er fint! Naboene er snille. Og det er en butikk i gata.
+– Bra! Bor du alene?
+– Nei, jeg bor med en venninne fra Ukraina. Det er koselig.
+– Hyggelig! Vi kan ses igjen neste uke?
+– Gjerne! Jeg sender deg en melding.
+
+De vinker og går hver sin vei.`,
+        vocabulary: [
+          { word: "utenfor" },
+          { word: "en bygning" },
+          { word: "å få" },
+          { word: "en adresse" },
+          { word: "en gate" },
+          { word: "en melding" },
+          { word: "å vinke" },
+          { word: "å sende" },
+          { word: "neste" },
+        ],
+        grammar: grammar_4_3,
+        questions: [
+          { q: "Hva ber Oksana om?", a: "Telefonnummeret til Nadia." },
+          { q: "Hvor bor Nadia?", a: "I Bergen, på Danmarksplass." },
+          { q: "Hvem bor Nadia med?", a: "Med en venninne fra Ukraina." },
+          { q: "Hva gjør de til slutt?", a: "De vinker og går. Nadia sender en melding neste uke." },
+        ],
+        fillGaps: [
+          { sentence: "Jeg bor ___ Bergen. (i/på)", answer: "i" },
+          { sentence: "Jeg bor ___ Danmarksplass. (i/på)", answer: "på" },
+          { sentence: "Det er en butikk ___ gata. (i/på)", answer: "i" },
+          { sentence: "Jeg ___ deg en melding. (å sende)", answer: "sender" },
+        ],
+        translate: [
+          { ua: "Де ти живеш?", no: "Hvor bor du?" },
+          { ua: "Я живу в Осло, на Стурґата.", no: "Jeg bor i Oslo, på Storgata." },
+          { ua: "Надішлю тобі повідомлення.", no: "Jeg sender deg en melding." },
+        ],
+      },
+
+      {
+        id: "4.4",
+        title: "Venner og sivilstatus",
+        titleUa: "Друзі і сімейний стан",
+        grammarFocus: ["noun gender: en/et", "plural forms: -er / unchanged", "civil status vocabulary"],
+        text: `Lena og Fatima drikker te etter kurset. De snakker om livet i Norge.
+
+– Lena, er du gift?
+– Nei, jeg er ikke gift. Jeg er enslig. Og du?
+– Jeg er samboer med en mann fra Somalia. Vi har to barn.
+– To barn! Hvor gamle er de?
+– Sønnen min er fem år. Datteren min er tre år. Og du – har du kjæreste?
+– Nei, ikke nå. Men jeg har mange venner her, det er det viktigste!
+– Jeg er enig! Venner er viktige. Hva gjør du i helgen?
+– Jeg vet ikke ennå. Kanskje en tur i fjellet?
+– Det høres bra ut! Kan vi bli med?
+– Ja, selvfølgelig! Jo flere, jo bedre!
+
+De ler og avtaler en tur på lørdag.`,
+        vocabulary: [
+          { word: "gift" },
+          { word: "enslig" },
+          { word: "samboer" },
+          { word: "et barn" },
+          { word: "en sønn" },
+          { word: "en datter" },
+          { word: "en kjæreste" },
+          { word: "enig" },
+          { word: "ennå" },
+          { word: "å høres ut" },
+        ],
+        grammar: grammar_4_4,
+        questions: [
+          { q: "Er Lena gift?", a: "Nei, hun er enslig." },
+          { q: "Hvem er Fatima samboer med?", a: "Med en mann fra Somalia." },
+          { q: "Hvor mange barn har Fatima?", a: "To barn." },
+          { q: "Hva avtaler de til slutt?", a: "En tur i fjellet på lørdag." },
+        ],
+        fillGaps: [
+          { sentence: "Jeg er ___ med en mann fra Somalia. (samboer)", answer: "samboer" },
+          { sentence: "Sønnen min er fem ___. (år)", answer: "år" },
+          { sentence: "Jo ___, jo bedre! (fler)", answer: "flere" },
+          { sentence: "Vi ___ en tur på lørdag. (å avtale)", answer: "avtaler" },
+        ],
+        translate: [
+          { ua: "Ти одружений/одружена?", no: "Er du gift?" },
+          { ua: "Я живу разом з партнером.", no: "Jeg er samboer." },
+          { ua: "Чим більше, тим краще!", no: "Jo flere, jo bedre!" },
+        ],
+      },
+
+      {
+        id: "4.5",
+        title: "Når kom du til Norge?",
+        titleUa: "Коли ти приїхав до Норвегії?",
+        grammarFocus: ["inversion with time expressions", "pronunciation: e / i / y", "past: kom"],
+        text: `Det er et møte i frivillighetssentralen. Folk fra mange land er der. En norsk frivillig, Kristian, snakker med deltakerne.
+
+– Hei! Jeg heter Kristian. Velkommen! Når kom dere til Norge?
+– Jeg kom i august to tusen og tjueto, sier Bohdan.
+– Og jeg kom i februar i år, sier Amira.
+– Hva gjør dere nå?
+– Nå går jeg på norskkurs og ser etter jobb, sier Bohdan.
+– Jeg passer barna hjemme foreløpig. Men jeg vil også lære norsk, sier Amira.
+– Det er bra! Norsk er nøkkelen. Hvordan er det å bo her?
+– Det er annerledes, men folk er hjelpsomme, sier Bohdan.
+– Ja! Naboene hjelper oss mye, sier Amira.
+– Det er typisk norsk! Dugnadsånden er sterk her.
+
+Alle ler. Det er en god start!`,
+        vocabulary: [
+          { word: "en frivillighetssentral" },
+          { word: "frivillig" },
+          { word: "en deltaker" },
+          { word: "å se etter" },
+          { word: "å passe barn" },
+          { word: "foreløpig" },
+          { word: "en nøkkel" },
+          { word: "annerledes" },
+          { word: "hjelpsomme" },
+          { word: "dugnadsånd" },
+        ],
+        grammar: grammar_4_5,
+        questions: [
+          { q: "Når kom Bohdan til Norge?", a: "I august 2022." },
+          { q: "Hva gjør Bohdan nå?", a: "Han går på norskkurs og ser etter jobb." },
+          { q: "Hva gjør Amira foreløpig?", a: "Hun passer barna hjemme." },
+          { q: "Hva er «dugnadsånden»?", a: "Den norske ånden om å hjelpe hverandre." },
+        ],
+        fillGaps: [
+          { sentence: "Jeg ___ til Norge i august. (å komme)", answer: "kom" },
+          { sentence: "Nå ___ jeg etter jobb. (å se)", answer: "ser" },
+          { sentence: "Folk er veldig ___. (hjelpsomme)", answer: "hjelpsomme" },
+          { sentence: "Norsk er ___ til et godt liv her. (nøkkelen)", answer: "nøkkelen" },
+        ],
+        translate: [
+          { ua: "Коли ти приїхав/приїхала до Норвегії?", no: "Når kom du til Norge?" },
+          { ua: "Зараз я шукаю роботу.", no: "Nå ser jeg etter jobb." },
+          { ua: "Люди тут дуже готові допомогти.", no: "Folk er veldig hjelpsomme her." },
+        ],
+      },
+
+    ],
+  },
+
+  {
+    id: 5,
+    slug: "familie-og-fritid",
+    title: "Familie og fritid",
+    titleUa: "Сім'я і дозвілля",
+    level: "A1",
+    status: "locked",
+    subtopics: [
+
+      {
+        id: "5.1",
+        title: "Familien vår",
+        titleUa: "Наша сім'я",
+        grammarFocus: ["bestemt form: -en/-et/-ene", "family vocabulary extended", "possessive after noun"],
+        text: `Hei! Jeg heter Oksana. Jeg vil fortelle om familien min.
+
+Mannen min heter Vasyl. Han er ingeniør. Vi har to barn – en sønn og en datter. Sønnen heter Mykola og er åtte år. Datteren heter Sofia og er fem år.
+
+Broren min bor i Polen nå. Han er gift med en polsk dame. De har ett barn – en liten gutt på to år.
+
+Familien til Vasyl er stor. Foreldrene hans bor i Lviv. Søsteren til Vasyl bor i Kyiv med mannen sin og tre barn.
+
+Vi bor langt fra familien vår, men vi ringer hverandre hver uke. Familien er det viktigste vi har.`,
+        vocabulary: [
+          { word: "å fortelle" },
+          { word: "en mann" },
+          { word: "en sønn" },
+          { word: "en datter" },
+          { word: "en gutt" },
+          { word: "foreldre" },
+          { word: "langt fra" },
+          { word: "det viktigste" },
+        ],
+        grammar: grammar_5_1,
+        questions: [
+          { q: "Hva heter mannen til Oksana?", a: "Han heter Vasyl." },
+          { q: "Hvor mange barn har Oksana og Vasyl?", a: "De har to barn." },
+          { q: "Hvor bor broren til Oksana?", a: "Han bor i Polen." },
+          { q: "Hvordan holder de kontakt med familien?", a: "De ringer hverandre hver uke." },
+        ],
+        fillGaps: [
+          { sentence: "Sønnen ___ heter Mykola. (min)", answer: "min" },
+          { sentence: "Familien ___ Vasyl er stor. (til)", answer: "til" },
+          { sentence: "Broren ___ er gift. (min)", answer: "min" },
+          { sentence: "___ er det viktigste vi har. (Familien)", answer: "Familien" },
+        ],
+        translate: [
+          { ua: "Мій чоловік — інженер.", no: "Mannen min er ingeniør." },
+          { ua: "Ми живемо далеко від сім'ї.", no: "Vi bor langt fra familien vår." },
+          { ua: "Сім'я — найважливіше, що в нас є.", no: "Familien er det viktigste vi har." },
+        ],
+      },
+
+      {
+        id: "5.2",
+        title: "Husarbeid og hvem gjør hva",
+        titleUa: "Хатня робота: хто що робить",
+        grammarFocus: ["eieforhold med 'til'", "present tense of household verbs", "spørreord: hvem"],
+        text: `I familien vår deler vi husarbeidet. Det er viktig at alle hjelper til.
+
+Mannen min støvsuger og vasker gulvet. Han gjør det alltid på lørdag. Jeg lager mat og tar oppvasken. Barna hjelper til med enkle ting.
+
+Sønnen min rydder rommet sitt. Datteren min setter bordet. De gjør det uten klaging – det er bra!
+
+Noen ganger bytter vi oppgaver. Da lager mannen middag og jeg vasker klær. Det er rettferdig.
+
+Husarbeid er ikke morsomt, men det er nødvendig. Vi gjør det raskt og sammen – da er det lettere!`,
+        vocabulary: [
+          { word: "husarbeid" },
+          { word: "å dele" },
+          { word: "å støvsuge" },
+          { word: "å vaske gulvet" },
+          { word: "å ta oppvasken" },
+          { word: "å rydde rommet" },
+          { word: "å sette bordet" },
+          { word: "rettferdig" },
+          { word: "klaging" },
+          { word: "å bytte" },
+        ],
+        grammar: grammar_5_2,
+        questions: [
+          { q: "Hva gjør mannen til Oksana på lørdag?", a: "Han støvsuger og vasker gulvet." },
+          { q: "Hva gjør sønnen?", a: "Han rydder rommet sitt." },
+          { q: "Hva gjør datteren?", a: "Hun setter bordet." },
+          { q: "Hva skjer når de bytter oppgaver?", a: "Da lager mannen middag og hun vasker klær." },
+        ],
+        fillGaps: [
+          { sentence: "Mannen ___ støvsuger på lørdag. (min)", answer: "min" },
+          { sentence: "Rommet ___ sønnen er ryddig. (til)", answer: "til" },
+          { sentence: "Vi ___ husarbeidet. (å dele)", answer: "deler" },
+          { sentence: "Det er ___. (rettferdig)", answer: "rettferdig" },
+        ],
+        translate: [
+          { ua: "Ми ділимо хатню роботу.", no: "Vi deler husarbeidet." },
+          { ua: "Кімната сина охайна.", no: "Rommet til sønnen er ryddig." },
+          { ua: "Разом це легше!", no: "Sammen er det lettere!" },
+        ],
+      },
+
+      {
+        id: "5.3",
+        title: "Fritidsinteresser",
+        titleUa: "Захоплення і дозвілля",
+        grammarFocus: ["modal verbs: skal, vil, kan, må", "infinitive without å after modal", "leisure vocabulary"],
+        text: `Jeg liker å ha en aktiv fritid. Det er viktig å gjøre noe man liker.
+
+Om mandagen skal jeg på yoga. Det er bra for kroppen og hodet. Om onsdagen kan jeg svømme i bassenget. Det koster ikke mye og er veldig avslappende.
+
+I helgene vil jeg helst tilbringe tid med familien. Vi kan gå på tur, dra til stranda eller besøke venner. Barna liker å leke ute.
+
+Mannen min liker å spille sjakk og lese bøker. Han må alltid ha en bok ved siden av sofaen!
+
+Vi har ikke alltid mye tid, men vi prøver å gjøre noe hyggelig minst én gang i uken.`,
+        vocabulary: [
+          { word: "fritid" },
+          { word: "aktiv" },
+          { word: "å svømme" },
+          { word: "et basseng" },
+          { word: "avslappende" },
+          { word: "å tilbringe" },
+          { word: "å leke" },
+          { word: "sjakk" },
+          { word: "minst" },
+          { word: "helst" },
+        ],
+        grammar: grammar_5_3,
+        questions: [
+          { q: "Hva gjør hun om mandagen?", a: "Hun skal på yoga." },
+          { q: "Hva liker barna å gjøre?", a: "De liker å leke ute." },
+          { q: "Hva er hobbyen til mannen?", a: "Han liker å spille sjakk og lese bøker." },
+          { q: "Hva prøver de å gjøre minst én gang i uken?", a: "Noe hyggelig — tur, strand eller besøk." },
+        ],
+        fillGaps: [
+          { sentence: "Om mandagen ___ jeg på yoga. (skal)", answer: "skal" },
+          { sentence: "Jeg ___ svømme om onsdagen. (kan)", answer: "kan" },
+          { sentence: "Han ___ alltid ha en bok. (må)", answer: "må" },
+          { sentence: "Vi ___ tilbringe tid med familien. (vil)", answer: "vil" },
+        ],
+        translate: [
+          { ua: "У понеділок я займаюся йогою.", no: "Om mandagen skal jeg på yoga." },
+          { ua: "Ти можеш плавати в басейні.", no: "Du kan svømme i bassenget." },
+          { ua: "Ми хочемо проводити час разом.", no: "Vi vil tilbringe tid sammen." },
+        ],
+      },
+
+      {
+        id: "5.4",
+        title: "Hjemme og ute",
+        titleUa: "Вдома і надворі",
+        grammarFocus: ["stedsadverb: hjem/hjemme, ute/ut, inne/inn", "motion vs. position verbs", "daily schedule"],
+        text: `Det er fredag ettermiddag. Alle i familien er hjemme tidlig i dag.
+
+Barna er ute og leker i hagen. Sønnen min har med seg en venn fra skolen. De leker ute i over en time.
+
+Jeg er inne og lager middag. Mannen min kommer hjem klokka fem. Han går rett inn og setter seg i sofaen. Han er trøtt etter jobben.
+
+– Vil barna komme inn nå? Det er snart middag.
+– Ja, jeg henter dem. Kom inn, barn! Middag er klar!
+
+Barna løper inn. Vi spiser middag sammen. Etterpå går vi en liten tur ute – det er fint vær. Klokka ni går alle hjem til sengs.`,
+        vocabulary: [
+          { word: "en hage" },
+          { word: "å hente" },
+          { word: "å løpe" },
+          { word: "tidlig" },
+          { word: "snart" },
+          { word: "rett" },
+          { word: "til sengs" },
+          { word: "over" },
+        ],
+        grammar: grammar_5_4,
+        questions: [
+          { q: "Hva gjør barna om ettermiddagen?", a: "De leker ute i hagen." },
+          { q: "Hva gjør mannen når han kommer hjem?", a: "Han går rett inn og setter seg i sofaen." },
+          { q: "Hva gjør familien etter middag?", a: "De går en liten tur ute." },
+          { q: "Når går alle til sengs?", a: "Klokka ni." },
+        ],
+        fillGaps: [
+          { sentence: "Barna er ___ og leker. (ute/ut)", answer: "ute" },
+          { sentence: "Mannen kommer ___ klokka fem. (hjem/hjemme)", answer: "hjem" },
+          { sentence: "Jeg er ___ og lager middag. (inne/inn)", answer: "inne" },
+          { sentence: "Kom ___, barn! (inne/inn)", answer: "inn" },
+        ],
+        translate: [
+          { ua: "Діти граються надворі.", no: "Barna leker ute." },
+          { ua: "Заходь!", no: "Kom inn!" },
+          { ua: "Чоловік повертається додому о п'ятій.", no: "Mannen kommer hjem klokka fem." },
+        ],
+      },
+
+      {
+        id: "5.5",
+        title: "Sende SMS og gjøre avtaler",
+        titleUa: "Надсилати SMS і домовлятися",
+        grammarFocus: ["spørreord: hvor mange", "modal: kan vi møtes?", "SMS language and expressions"],
+        text: `Oksana og venninnen Hana sender meldinger til hverandre.
+
+Oksana: Hei! Har du planer i helgen?
+Hana: Hei! Nei, ikke noe spesielt. Hva tenker du?
+Oksana: Kanskje vi kan møtes? Jeg vil gjerne drikke kaffe og prate litt.
+Hana: Ja, det høres bra ut! Lørdag eller søndag?
+Oksana: Lørdag passer best for meg. Klokka tolv?
+Hana: Passer fint! Hvor mange barn tar du med?
+Oksana: Bare Sofia. Mykola er hos bestefar den dagen.
+Hana: OK! Sees på lørdag. Ha det!
+Oksana: Ha det bra! 😊
+
+På lørdag møtes de på den lille kaféen i sentrum. De prater i to timer. Det er akkurat det de trenger!`,
+        vocabulary: [
+          { word: "en plan" },
+          { word: "spesielt" },
+          { word: "å tenke" },
+          { word: "å passe" },
+          { word: "en bestefar" },
+          { word: "å møtes" },
+          { word: "å sees" },
+          { word: "bare" },
+        ],
+        grammar: grammar_5_5,
+        questions: [
+          { q: "Hva vil Oksana gjøre i helgen?", a: "Hun vil møte Hana og drikke kaffe." },
+          { q: "Hvilken dag avtaler de?", a: "Lørdag." },
+          { q: "Hvor mange barn tar Oksana med?", a: "Bare én – Sofia." },
+          { q: "Hvor er Mykola den dagen?", a: "Hos bestefar." },
+        ],
+        fillGaps: [
+          { sentence: "Kanskje vi ___ møtes? (kan)", answer: "kan" },
+          { sentence: "Lørdag ___ best for meg. (å passe)", answer: "passer" },
+          { sentence: "Hvor mange barn ___ du med? (å ta)", answer: "tar" },
+          { sentence: "___ på lørdag! (å sees)", answer: "Sees" },
+        ],
+        translate: [
+          { ua: "Може, ми зустрінемося?", no: "Kanskje vi kan møtes?" },
+          { ua: "Субота мені найкраще підходить.", no: "Lørdag passer best for meg." },
+          { ua: "Побачимося в суботу!", no: "Sees på lørdag!" },
+        ],
+      },
+
+    ],
+  },
+
 ];
