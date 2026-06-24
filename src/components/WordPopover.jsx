@@ -1,4 +1,5 @@
 import { useState, useRef } from "react"
+import { supabase } from "../lib/supabase"
 
 const PUNCT = /^[\s\u2013\-!?.,;:«»""]+$/
 const WORD_EXPLANATION_PROMPT = `Ти вчитель норвезької мови для україномовного учня.
@@ -23,11 +24,16 @@ function tokenize(text) {
 
 
 async function callClaude(messages, systemPrompt) {
+  const { data: { session } } = await supabase.auth.getSession()
   const res = await fetch("/api/Chat", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+    },
     body: JSON.stringify({ messages, systemPrompt }),
   })
+  if (!res.ok) throw new Error("API error")
   const data = await res.json()
   return data.content?.[0]?.text || ""
 }
